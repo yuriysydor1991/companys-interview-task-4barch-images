@@ -27,10 +27,10 @@ class BMPImage : public std::enable_shared_from_this<BMPImage>,
    */
   static BMPImagePtr create();
 
-  virtual size_t width() override;
-  virtual size_t height() override;
+  virtual size_t width() const override;
+  virtual size_t height() const override;
 
-  virtual const barchdata& data() override;
+  virtual const barchdata& data() const override;
 
   virtual void width(const size_t& nwidth) override;
   virtual void height(const size_t& nheight) override;
@@ -41,11 +41,24 @@ class BMPImage : public std::enable_shared_from_this<BMPImage>,
   virtual unsigned int bits_per_pixel();
   virtual void bits_per_pixel(const unsigned int& nbits);
 
+  virtual void filepath(const std::filesystem::path& npath) override;
+  virtual const std::filesystem::path& filepath() const override;
+
+  virtual PixelPtr pixel(const size_t& col, const size_t& row) const override;
+  virtual void pixel(const PixelPtr& nval) override;
+
+  virtual barchdata line(const size_t& row) const;
+
  private:
+  size_t get_data_index(const size_t& col, const size_t& row) const;
+  size_t get_data_index(const PixelPtr& pix) const;
+
   size_t mwidth{0};
   size_t mheight{0};
 
   unsigned int mbitspp{0U};
+
+  std::filesystem::path mpath;
 
   barchdata mdata;
 };
