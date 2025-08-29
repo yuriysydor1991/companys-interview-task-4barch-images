@@ -176,6 +176,12 @@ option(
   OFF
 )
 
+option(
+  ENABLE_COMPONENT_TESTS
+  "Set to ON value if component tests build and run should be available"
+  OFF
+)
+
 string(TIMESTAMP PROJECT_CONFIGURE_DATE "%Y-%m-%d %H:%M:%S")
 
 execute_process(

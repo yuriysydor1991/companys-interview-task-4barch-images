@@ -6,3 +6,5 @@ target_sources(
     BMPReader.cpp
 )
 
+add_subdirectory(tests)
+

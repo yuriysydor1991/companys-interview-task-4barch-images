@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 
+#include "src/lib/libmain/readers/BMP.h"
 #include "src/log/log.h"
 
 namespace barchclib0::readers
@@ -28,6 +29,8 @@ BMPImagePtr BMPReader::read(const fs::path& imagePath)
       return nullptr;
     }
 
+    LOGD("Trying to read the file: " << imagePath);
+
     return read_data(imagePath);
   }
   catch (const std::exception& e) {
@@ -46,26 +49,45 @@ BMPImagePtr BMPReader::read_data(const fs::path& imagePath)
     return nullptr;
   }
 
-  uint32_t width{0U};
+  BITMAPFILEHEADER fileHeader;
+  BITMAPINFOHEADER infoHeader;
 
-  fimage >> width;
+  fimage.read(reinterpret_cast<char*>(&fileHeader), sizeof(fileHeader));
+  fimage.read(reinterpret_cast<char*>(&infoHeader), sizeof(infoHeader));
 
-  if (width == 0) {
+  if (fileHeader.bfType != 0x4D42) {
+    LOGE("Not a BMP file " << imagePath);
+    return nullptr;
+  }
+
+  const std::streamsize width = infoHeader.biWidth;
+  const std::streamsize height = infoHeader.biHeight;
+
+  if (width <= 0) {
     LOGE("Invalid width specified (0)");
     return nullptr;
   }
 
-  uint32_t height{0U};
-
-  fimage >> height;
-
-  if (height == 0) {
+  if (height <= 0) {
     LOGE("Invalid height specified (0)");
     return nullptr;
   }
 
-  const std::streamsize expectedSize = static_cast<std::streamsize>(width) *
-                                       static_cast<std::streamsize>(height);
+  LOGT("Declared image size: " << width << "x" << height);
+  LOGT("Bits per pixel " << infoHeader.biBitCount);
+
+  LOGT("Offset to " << fileHeader.bfOffBits);
+
+  fimage.seekg(fileHeader.bfOffBits, std::ios::beg);
+
+  const std::streamsize rowSize =
+      ((infoHeader.biBitCount * infoHeader.biWidth + 31) / 32) * 4;
+
+  LOGT("Row size: " << rowSize << " bytes");
+
+  const std::streamsize expectedSize = rowSize * std::abs(infoHeader.biHeight);
+
+  LOGT("Expected size: " << expectedSize << " bytes");
 
   barchdata fdata(static_cast<barchdata::size_type>(expectedSize),
                   static_cast<barchdata::value_type>(0));
@@ -74,13 +96,13 @@ BMPImagePtr BMPReader::read_data(const fs::path& imagePath)
 
   const std::streamsize readSize = fimage.gcount();
 
+  fimage.close();
+
   if (readSize != expectedSize) {
     LOGE("Expected to fetch " << expectedSize << " bytes but got " << readSize
                               << " bytes instead");
     return nullptr;
   }
-
-  fimage.close();
 
   auto image = BMPImage::create();
 
@@ -92,6 +114,7 @@ BMPImagePtr BMPReader::read_data(const fs::path& imagePath)
   image->width(static_cast<size_t>(width));
   image->height(static_cast<size_t>(height));
   image->data(std::move(fdata));
+  image->bits_per_pixel(infoHeader.biBitCount);
 
   return image;
 }

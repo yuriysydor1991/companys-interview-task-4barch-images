@@ -23,4 +23,8 @@ void BMPImage::data(const barchdata& ndata) { mdata = ndata; }
 
 void BMPImage::data(barchdata&& ndata) { mdata = std::move(ndata); }
 
+unsigned int BMPImage::bits_per_pixel() { return mbitspp; }
+
+void BMPImage::bits_per_pixel(const unsigned int& nbits) { mbitspp = nbits; }
+
 }  // namespace barchclib0

@@ -38,9 +38,14 @@ class BMPImage : public std::enable_shared_from_this<BMPImage>,
   virtual void data(const barchdata& ndata) override;
   virtual void data(barchdata&& ndata) override;
 
+  virtual unsigned int bits_per_pixel();
+  virtual void bits_per_pixel(const unsigned int& nbits);
+
  private:
   size_t mwidth{0};
   size_t mheight{0};
+
+  unsigned int mbitspp{0U};
 
   barchdata mdata;
 };
