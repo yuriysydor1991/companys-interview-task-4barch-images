@@ -5,7 +5,7 @@
 #include "ILib.h"
 #include "LibraryContext.h"
 
-namespace templatelib0
+namespace barchclib0
 {
 
 BarchImagePtr BarchImage::create() { return std::make_shared<BarchImage>(); }
@@ -16,4 +16,12 @@ size_t BarchImage::height() { return mheight; }
 
 const barchdata& BarchImage::data() { return mdata; }
 
-}  // namespace templatelib0
+void BarchImage::width(const size_t& nwidth) { mwidth = nwidth; }
+
+void BarchImage::height(const size_t& nheight) { mheight = nheight; }
+
+void BarchImage::data(const barchdata& ndata) { mdata = ndata; }
+
+void BarchImage::data(barchdata&& ndata) { mdata = std::move(ndata); }
+
+}  // namespace barchclib0

@@ -6,7 +6,7 @@
 
 #include "src/lib/libmain/LibFactory.h"
 
-namespace templatelib0
+namespace barchclib0
 {
 
 namespace
@@ -64,4 +64,4 @@ bool LibraryFacade::libcall(std::shared_ptr<LibraryContext> ctx)
   return libInstance->libcall(ctx);
 }
 
-}  // namespace templatelib0
+}  // namespace barchclib0

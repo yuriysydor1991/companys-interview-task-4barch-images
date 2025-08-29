@@ -17,7 +17,7 @@ namespace lib0impl
 class LibFactorySynthParent
 {
  public:
-  using ILib = templatelib0::ILib;
+  using ILib = barchclib0::ILib;
   using LibraryContext = ILib::LibraryContext;
 
   virtual ~LibFactorySynthParent() = default;

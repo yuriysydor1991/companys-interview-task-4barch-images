@@ -8,7 +8,7 @@
 #include "ILib.h"
 #include "LibraryContext.h"
 
-namespace templatelib0
+namespace barchclib0
 {
 
 /**
@@ -33,6 +33,12 @@ class BarchImage : public std::enable_shared_from_this<BarchImage>
 
   const barchdata& data();
 
+  void width(const size_t& nwidth);
+  void height(const size_t& nheight);
+
+  void data(const barchdata& ndata);
+  void data(barchdata&& ndata);
+
  private:
   size_t mwidth{0};
   size_t mheight{0};
@@ -43,6 +49,6 @@ class BarchImage : public std::enable_shared_from_this<BarchImage>
 using BarchImagePtr = BarchImage::BarchImagePtr;
 using barchdata = BarchImage::barchdata;
 
-}  // namespace templatelib0
+}  // namespace barchclib0
 
 #endif  // THE_BMP_2_BARCH_IMAGE_CODER_PROJECT_BARCHIMAGE_CLASS_H

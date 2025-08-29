@@ -9,7 +9,7 @@
  * @brief The implementation part of the application library.
  * Hides all the guts of particular implementation code.
  */
-namespace templatelib0
+namespace barchclib0
 {
 
 /**
@@ -24,7 +24,7 @@ namespace templatelib0
 class ILib
 {
  public:
-  using LibraryContext = templatelib0::LibraryContext;
+  using LibraryContext = barchclib0::LibraryContext;
 
   virtual ~ILib() = default;
   ILib() = default;
@@ -42,6 +42,6 @@ class ILib
   virtual bool libcall(std::shared_ptr<LibraryContext> ctx) = 0;
 };
 
-}  // namespace templatelib0
+}  // namespace barchclib0
 
 #endif  // YOUR_CPP_APP_TEMPLATE_PROJECT_ILIB_CLASS_H

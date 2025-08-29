@@ -5,7 +5,7 @@
  * @brief The facade interface namespace for the library.
  * Designed to give access to the library functionality.
  */
-namespace templatelib0
+namespace barchclib0
 {
 
 /**
@@ -27,6 +27,6 @@ class LibraryContext
   // Add some fields to pass data from it's users.
 };
 
-}  // namespace templatelib0
+}  // namespace barchclib0
 
 #endif  // YOUR_CPP_APP_TEMPLATE_PROJECT_LIBRARYCONTEXT_CLASS_H

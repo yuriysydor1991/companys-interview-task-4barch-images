@@ -17,7 +17,7 @@ namespace lib0impl
 class LibFactory
 {
  public:
-  using ILib = templatelib0::ILib;
+  using ILib = barchclib0::ILib;
   using LibraryContext = ILib::LibraryContext;
 
   virtual ~LibFactory() = default;

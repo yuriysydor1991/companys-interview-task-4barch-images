@@ -14,7 +14,7 @@ namespace lib0impl
  * Class is designed to hold the main library implementation code. So, put
  * a new code inside of a current class' libcall method.
  */
-class LibMain : public templatelib0::ILib
+class LibMain : public barchclib0::ILib
 {
  public:
   virtual ~LibMain() = default;
