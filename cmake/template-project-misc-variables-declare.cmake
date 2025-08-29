@@ -6,6 +6,11 @@ set(
 )
 
 set(
+  PROJECT_LIBRARY_NAME "${PROJECT_NAME}Lib"
+  CACHE STRING "Project main library name and target"
+)
+
+set(
   QT6_OBJECT_NAME "${PROJECT_NAME}QT6Obj"
   CACHE STRING "Project Qt6 object library name and target"
 )
