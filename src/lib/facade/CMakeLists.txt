@@ -11,6 +11,7 @@ install(
     LibraryFacade.h 
     LibraryContext.h
     ILib.h
+    IBarchImage.h
   DESTINATION include/${PROJECT_LIBRARY_NAME} 
   COMPONENT Development
 )

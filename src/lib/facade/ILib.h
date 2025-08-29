@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "src/lib/facade/LibraryContext.h"
+#include "LibraryContext.h"
 
 /**
  * @brief The implementation part of the application library.

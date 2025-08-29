@@ -6,6 +6,7 @@ target_sources(
     LibMain.cpp
     LibFactory.cpp
     BarchImage.cpp
+    BMPImage.cpp
 )
 
 add_subdirectory(tests)
