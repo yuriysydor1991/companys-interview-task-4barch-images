@@ -4,7 +4,6 @@ target_sources(
   ${PROJECT_LIBRARY_NAME}
   PRIVATE 
     LibraryFacade.cpp
-    BarchImage.cpp
 )
 
 install(

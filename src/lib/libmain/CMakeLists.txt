@@ -5,6 +5,7 @@ target_sources(
   PRIVATE 
     LibMain.cpp
     LibFactory.cpp
+    BarchImage.cpp
 )
 
 add_subdirectory(tests)

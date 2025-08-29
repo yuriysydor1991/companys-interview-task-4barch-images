@@ -5,8 +5,7 @@
 #include <memory>
 #include <vector>
 
-#include "ILib.h"
-#include "LibraryContext.h"
+#include "src/lib/facade/IBarchImage.h"
 
 namespace barchclib0
 {
@@ -14,11 +13,11 @@ namespace barchclib0
 /**
  * @brief The barch image class.
  */
-class BarchImage : public std::enable_shared_from_this<BarchImage>
+class BarchImage : public std::enable_shared_from_this<BarchImage>,
+                   virtual public IBarchImage
 {
  public:
   using BarchImagePtr = std::shared_ptr<BarchImage>;
-  using barchdata = std::vector<char>;
 
   virtual ~BarchImage() = default;
   BarchImage() = default;
@@ -28,16 +27,16 @@ class BarchImage : public std::enable_shared_from_this<BarchImage>
    */
   static BarchImagePtr create();
 
-  size_t width();
-  size_t height();
+  virtual size_t width() override;
+  virtual size_t height() override;
 
-  const barchdata& data();
+  virtual const barchdata& data() override;
 
-  void width(const size_t& nwidth);
-  void height(const size_t& nheight);
+  virtual void width(const size_t& nwidth) override;
+  virtual void height(const size_t& nheight) override;
 
-  void data(const barchdata& ndata);
-  void data(barchdata&& ndata);
+  virtual void data(const barchdata& ndata) override;
+  virtual void data(barchdata&& ndata) override;
 
  private:
   size_t mwidth{0};

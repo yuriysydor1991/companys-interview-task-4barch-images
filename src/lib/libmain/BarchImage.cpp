@@ -1,9 +1,8 @@
-#include "src/lib/facade/BarchImage.h"
+#include "src/lib/libmain/BarchImage.h"
 
+#include <cstddef>
 #include <memory>
-
-#include "ILib.h"
-#include "LibraryContext.h"
+#include <vector>
 
 namespace barchclib0
 {
