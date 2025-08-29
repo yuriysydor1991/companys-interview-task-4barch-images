@@ -2,14 +2,14 @@ cmake_minimum_required(VERSION 3.13)
 
 # Change the PROJECT_NAME var value to change executable name
 set(
-  PROJECT_NAME "CppAppTemplate"
+  PROJECT_NAME "barch-coder"
   CACHE STRING "Project general name with an executable name"
 )
 
 project(
   ${PROJECT_NAME}
   VERSION 0.9.0
-  DESCRIPTION "A C++ Template project for you!"
+  DESCRIPTION "The barch encoder library and UI designed for company's interview"
   HOMEPAGE_URL "http://www.kytok.org.ua/"
   LANGUAGES CXX
 )
@@ -28,3 +28,4 @@ add_subdirectory(src)
 add_subdirectory(doc)
 
 include(template-project-feature-enabler-post)
+
