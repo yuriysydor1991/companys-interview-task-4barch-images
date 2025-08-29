@@ -8,15 +8,15 @@ Helps you go beyond raw code — build a complete, ready-to-ship **software prod
 
 Enables rapid creation of a complete **software product** — not just raw code or a simple program.
 
-**Just fork it and implement application straight away!**
+**Just fork it and implement your application straight away!**
 
 Examine available branches to find your most applicable variant of the template or combine multiple branches by merging them to assemble the best suited template structure for your needs:
 
-- `main` branch at [project root page](https://github.com/yuriysydor1991/cpp-app-template) (**current**) just the clear `main` function and all available CMake integrations with no additional app infrastructure classes.
+- `main` branch at [project root page](https://github.com/yuriysydor1991/cpp-app-template) just the clear `main` function no additional app infrastructure classes and all available CMake integrations.
 - `app` branch at [app](https://github.com/yuriysydor1991/cpp-app-template/tree/app) with just general application related classes to generate a single binary executable.
 - `applib` branch at [applib](https://github.com/yuriysydor1991/cpp-app-template/tree/applib) for the application binary with additional separate library binary and header files (available for the installation) in order to provide library's code reusability across multiple applications.
 - `lib` branch at [lib](https://github.com/yuriysydor1991/cpp-app-template/tree/lib) for the library with the headers include files (and documentation) without target binary.
-- `appQt6` branch at [appQt6](https://github.com/yuriysydor1991/cpp-app-template/tree/appQt6) for the application general classes with additional defined structure for the Qt6 QML window application development.
+- `appQt6` branch at [appQt6](https://github.com/yuriysydor1991/cpp-app-template/tree/appQt6) (**current**) for the application general classes with additional defined structure for the Qt6 QML window application development.
 - `appGtkmm3` branch at [appGtkmm3](https://github.com/yuriysydor1991/cpp-app-template/tree/appGtkmm3) for the application general classes with additional defined structure for the Gtkmm-3.0 with C++ window application development.
 - `appGtkmm3Glade` branch at [appGtkmm3Glade](https://github.com/yuriysydor1991/cpp-app-template/tree/appGtkmm3Glade) for the application general classes with additional defined structure for the C++ application development with Gtkmm-3.0 and [Glade](https://en.wikipedia.org/wiki/Glade_Interface_Designer) application with XML UI creation.
 - `appFreeGlut` branch at [appFreeGlut](https://github.com/yuriysydor1991/cpp-app-template/tree/appFreeGlut) with just general application related classes to generate a single binary executable with a FreeGlut library for the OpenGL 3D development.
@@ -91,7 +91,14 @@ This section contains list of required packages and/or tools that must be presen
 In order to build minimum template project install the GCC C++ compiler with CMake and Git.
 
 ```
+# the default dev tools
 sudo apt install -y git g++ cmake
+
+# all the Qt6 required packages
+sudo apt install -y qt6-base-dev qt6-base-dev-tools \
+  qt6-declarative-dev qt6-tools-dev qt6-tools-dev-tools \
+  qml6-module-qtquick qml6-module-qtqml-workerscript \
+  qml6-module-qtquick-templates qml6-module-qtquick-window
 ```
 
 ## Required tools for the MS Windows based OS
@@ -172,7 +179,8 @@ sudo apt install -y flatpak flatpak-builder
 You'll also need the one of it's target SDK which may be installed by a command that may look like this:
 
 ```
-flatpak install runtime/org.freedesktop.Sdk/x86_64/20.08
+flatpak install runtime/org.kde.Sdk/x86_64/6.8
+flatpak install runtime/org.kde.Platform/x86_64/6.8
 ```
 
 Replace the `runtime/org.freedesktop.Sdk/x86_64/20.08` with your preferred SDK. Consult the flatpak documentation on how to list all available options.
@@ -227,15 +235,33 @@ Details at the section [Enabling the Docker container build and run](#enabling-t
 
 ## Implement code straight away!
 
-To proceed the application implementation right away look for the `main.cpp` file which is designed to accept initial code of the application. Specifically, new code may be placed into the `int main(int argc, char** argv)` free function.
+To proceed the application implementation right away look for the `main.qml` file which is designed to accept initial QML code of the application.
 
 **But do not forget about the SOLID principles and code decomposing!**
 
-It's preferable to create other directories which would contain implemented components of the application and include them into the `main.cpp` file implementation, rather than put all the code inside the `main` function itself.
+It's preferable to create other directories which would contain implemented QML-components of the application and include them into the `main.qml` file implementation, rather than put all the code inside the `main.qml` class itself (for the trivial applications in may be ok).
+
+Some Qt6 related code may be introduced into the `Qt6Initer` class for supporting the better Qt6 experience.
 
 ## Changing the project and executable name
 
 Change the name of the project in the project's root `CMakeLists.txt` file by introducing a new value for the the `PROJECT_NAME` and/or `PROJECT_BINARY_NAME` variable which is located at `cmake/template-project-misc-variables-declare.cmake`. It is recommended to do so the executable will represent your new application name instead of templated default one - the `CppAppTemplate`.
+
+## Introducing custom command line parameters
+
+In order to introduce some additional command line parameters for the binary look for the `CommandLineParser` class implementation. It contains command line parsing routines that are passed by `ApplicationFactory` class after the `main` function was called.
+
+Add some additional custom fields into the `ApplicationContext` class in order to pass some custom command line flags and/or data to the `IApplication` interface abstract class descendants that will be created by the `ApplicationFactory` during command line arguments parse.
+
+## Implement your own IApplication descendants
+
+You may implement another custom `IApplication` descendant classes in order to support high level variety of the application behavior to not to mess original `Application` class with irrelevant `if`-s statements and mixing up code (remember about the SOLID's single responsibility principle).
+
+You may accomplish `IApplication` subclassing by directly creating an `IApplication` subclass in a new file or extend existing `IApplication` descendant like `Application`, `ApplicationHelpPrinter` or a `ApplicationVersionPrinter`.
+
+Register newly created custom `IApplication` descendant in the `ApplicationFactory`'s `create_application` method which is responsible to create appropriate application instance with accordance of a provided data through the command line parameters.
+
+That may be accomplished by implementing a custom `ApplicationFactory` descendant and overriding it's create methods like `create_application` and/or others (call appropriate static member in the `main` function of the `main.cpp` file).
 
 ## Version tracking and other project parameters
 
@@ -633,6 +659,34 @@ Alternatively, run the `ctest` command from any location by specifying the test 
 
 ```
 ctest --tests-dir /path/to/the/project/build/directory
+```
+
+In order to run particular test execute the `ctest` command with test's name after the `-R` command line flag. For example, for the `UTEST_ApplicationFactory` test it'll look something like this:
+
+```
+# from the project build directory 
+
+ctest -R UTEST_ApplicationFactory
+```
+
+### Manual tests run
+
+Currently tests are separated in different files named with `UTEST_*` pattern for the unit tests.
+
+You may search for all compiled available tests by a next command:
+
+```
+# from the project root or a build directory
+
+find -type f -executable -name 'UTEST_*'
+```
+
+After that, choose particular test of interest and execute it manually if needed. For example, for the `ApplicationFactory` class pass it's UT relative file system path from a project's root directory into the command line and hit enter (GNU/Linux based):
+
+```
+# from the project root
+
+./build/src/app/tests/unit/ApplicationFactory/UTEST_ApplicationFactory
 ```
 
 # Installing

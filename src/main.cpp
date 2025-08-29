@@ -1,5 +1,4 @@
-#include "project-global-decls.h"
-#include "src/log/log.h"
+#include "src/app/ApplicationFactory.h"
 
 /**
  * @brief The application main routine, obviously.
@@ -10,11 +9,7 @@
  * @return Returns a zero value in case of success and other value
  * in case of any error.
  */
-int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
+int main(int argc, char** argv)
 {
-  LOG_INIT_DEFAULTS();
-
-  LOGI("Your " << project_decls::PROJECT_NAME << " implementation goes here!");
-
-  return 0;
+  return app::ApplicationFactory::execute(argc, argv);
 }

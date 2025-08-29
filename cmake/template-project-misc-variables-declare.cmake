@@ -6,6 +6,11 @@ set(
 )
 
 set(
+  QT6_OBJECT_NAME "${PROJECT_NAME}QT6Obj"
+  CACHE STRING "Project Qt6 object library name and target"
+)
+
+set(
   PROJECT_MAINTAINER "Your Name"
   CACHE STRING "Project maintainer name (used for the DEB package)"
 )
@@ -142,6 +147,12 @@ option(
   OFF
 )
 
+set(
+  DEFAULT_LOG_FILE_PATH ""
+  CACHE STRING 
+  "Sets the default log file path"
+)
+
 option(
   ENABLE_LIBCURL
   "Set to ON to enable the libcurl (by using system wide available or through the Internet)"
@@ -152,12 +163,6 @@ option(
   ENABLE_GPROF
   "Set to ON to enable the gprof application profiler analysis"
   OFF
-)
-
-set(
-  DEFAULT_LOG_FILE_PATH ""
-  CACHE STRING 
-  "Sets the default log file path"
 )
 
 option(

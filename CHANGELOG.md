@@ -5,82 +5,68 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [main0.10.0] - 2025-06-06
+## [appQt60.8.0] - 2025-06-06
 
-- 27ebb79 Refined issues in the Docker READMEs doc
-- 9b01974 Separating the Docker single container build and run targets
-- cc85abf Erasing UTs build and ctest call inside the Dockerfile
-- 7f78451 Introducing the Docker single run container target.
-- 4466527 Adding project neatness to the READMEs
-- 061869f Introducing the appLog4Cpp5 branch info into the READMEs
-- bcc9e4f Implementing the logging macros and a simple logger to perform log messaging
-- be5178c Introducing the appMongoDBCpp4 branch info into the READMEs
-- 024453c Code formatting applied
-- 9d19ef2 Making the flatpak source json conf file configurable during cmake conf stage
-- 2e50a87 Refining the deb cmake info for cpack
-- e25158c Including and reusing the project-global-decls.h for demonstration
-- 3992ba3 Erasing redundant suppression that causes cppcheck to fail
-- 2055c45 Replacing the inviting comment with printable message on main.
-- d61425b Introducing the appSQLiteCpp3 branch info into the READMEs
-- e07d63b Introducing the gitlab mirror into the READMEs
-- bb779b1 Introducing misc/.cppcheck-suppress file to list cppcheck suppressions of the false positives
-- c182171 Introducing the appMySQLCppConn branch info into the READMEs
-- ce81652 Introducing the appBoostBeast branch info into the READMEs
-- 09bf4c6 Explicitly specifying the combining of the template branches
-- 85ef7c7 introducing the appPgSQLxx branch into the READMEs
-- 4c8cacd Introducing a new appWt4 branch info into the READMEs
+- e671fb9 Refined issues in the Docker READMEs doc
+- 376a0d4 Refining the Docker target for the Qt6
+- 985e78c Separating the Docker single container build and run targets
+- 92fd745 Introducing the Docker single run container target.
+- cbcefde Adding project neatness to the READMEs
+- dfd0532 Introducing the appLog4Cpp5 branch info into the READMEs
+- d2d7bfb Implementing the logging macros and a simple logger to perform log messaging
+- 7575c6b Introducing the appMongoDBCpp4 branch info into the READMEs
+- f4b6417 Making the flatpak source json conf file configurable during cmake conf stage
+- 2b1aac5 Introducing the Qt6 dependencies into the dep-variables for cpack
+- 44051f5 Refining the deb cmake info for cpack
+- b6cec47 Introducing the appSQLiteCpp3 branch info into the READMEs
+- dbc0e9a Refining the ApplicationContext mock
+- 7a392b6 Introducing the gitlab mirror into the READMEs
+- 0060ba1 Introducing the appMySQLCppConn branch info into the READMEs
+- b216bcb Introducing the appBoostBeast branch info into the READMEs
+- 4c41a3c Explicitly specifying the combining of the template branches
+- b8e29cf introducing the appPgSQLxx branch into the READMEs
+- 9701986 Introducing a new appWt4 branch info into the READMEs
+- 608080f Introducing the error exit code for a cppcheck target
+- 0379b5c Refinining the cppcheck target
+- 158da47 Introducing the donation notice into the READMEs
+- d8e3d37 Sharing screen for thr flatpak package to show window
+- f7b8dc9 Reintroducing lost applib branch in README.md
+- 6b339b7 Introducing the appMeson branch info into the READMEs
+- 8c01f65 Refining the branch info
+- 927544b Replacing flatpak SDK from the KDE in READMEs
+- 5020d71 Replacing the platform and SDK with one from kde 6.8
+- 52a43a8 Applied clang-format
+- 98c1cb6 Introducing the flatpak sections into the READMEs
+- 49b02c0 Introducing the flatpak package creation from the template source.
+- 74df07d Erasing the /analyze from the default MSVC compile options
+- 06c56a6 Introducing the DEB package gen info in the READMEs
+- e3f2bcf Introducing the cpack configuration for the deb package generation
+- 03e4417 Introducing the LICENSE file with free of use license and notice
+- 6bcffdd Introducing the appSDL2 branch into the READMEs
+- d44e58d Introducing clang-tidy
+- ac3f852 Introducing the FreeGlut/OpenGL appFreeGlut branch info into READMEs
+- 2e6be64 Avoiding the compilation warnings at the UTEST_CommandLineParser
+- df9a502 Introducing MSVC extra compile options for warnings
+- 1bf1d01 Adding MSVC settings file to the .gitignore
+- 452ae08 Adding the out directory for MSVC into .gitignore
+- 6f8c73d Erasing merging syms in READMEs
+- 5d92e2d Specifying the appGtkmm3Glade branch in the READMEs
+- f5d62c9 Introducing the appGtkmm3 branch info into the READMEs
+- a736514 Replacing the /usr/bin prefix parameter with right /usr in installation section
+- d83d0d2 Introducing the lib branch info into the READMEs
 
-## [main0.9.0] - 2025-03-31
+## [appQt60.7.0] - 2025-03-15
 
-- bb3bf64 Release 0.9.0 2025-03-31
-- 3d7f096 Introducing the error exit code for a cppcheck target
-- b3441c5 Refining the cppcheck target
-- f0be94a Decomposing ALLSORUCES variable into template-project-misc-variables-declare.cmake
-- f732fb3 Introducing the donation notice into the READMEs
-- 0520380 the main branch info refine
-- 7c505e3 Refining the READMEs to represent single main.cpp file
-- a7d1c9b Introducing the appMeson branch info into the READMEs
-- 7880f6f Fixing applib on the app branch on the READMEs
-- a3cf6c2 Erasing the app branch code
-- b1e99d8 Introducing the app branch and refine the master branch
-- c8de777 Introducing the flatpak sections into the READMEs
-- 69ffe40 Introducing the flatpak package creation from the template source.
-- 4b00b9f Inserting the release tag link
-- 8bd91be Incrementing version to 0.9.0
-
-## [app0.8.0] - 2025-03-20
-
-- dfff631 Release app0.8.0 2025-03-20
-- c2d08e9 Replacing int flag with a bool for the CommandLineParser
-- 5adff97 Erasing the /analyze from the default MSVC compile options
-- 3a70693 Introducing the DEB package gen info in the READMEs
-- a408273 Introducing the cpack configuration for the deb package generation
-- e9d052e Introducing the LICENSE file with free of use license and notice
-- f42d640 Fixing typo in the README
-- 3f3d38e Introducing the clang-tidy info into the READMEs
-- dfc52ec Introducing clang-tidy
-- 3bb98fb Introducing the appSDL2 branch into the READMEs
-- 29532bc Erasing redundant libraries installation info
-- 41450f5 Introducing the FreeGlut/OpenGL appFreeGlut branch info into READMEs
-- 6cdefed Incrementing version to 0.8.0
-
-## [app0.7.0] - 2025-03-17
-
-- b2ae262 Release app0.7.0 2025-03-17
-- 4f45e8d Introducing MS Windows tools install description into READMEs
-- 7d7defd Avoiding the compilation warnings at the UTEST_CommandLineParser
-- 39d9486 Adding MSVC settings file to the .gitignore
-- b04d376 Introducing MSVC extra compile options for warnings
-- 5f18f5a Adding the out directory for MSVC into .gitignore
-- b7e960b Specifying the appGtkmm3Glade branch in the READMEs
-- ef33819 Introducing the appGtkmm3 branch info into the READMEs
-- 68a1efa Revert "Introducing the GTKmm-3.0 window infrastructure."
-- 6adae7b Revert "Adding gtkmm-3.0 to required packages in READMEs"
-- e19f268 Adding gtkmm-3.0 to required packages in READMEs
-- eedd7ac Introducing the GTKmm-3.0 window infrastructure.
-- 1da93db Replacing the /usr/bin prefix parameter with right /usr in installation section
-- adc02d6 Introducing the lib branch info into the READMEs
-- 6230596 Introducing the appQt6 branch in READMEs
+- cde5c67 Release appQt60.7.0 2025-03-15
+- 789ffb9 Decomposing Qt6Initer class into separate virtual method.
+- 5d8f1f6 Refining READMEs
+- 41e363b Refining the Application UTs
+- 8565a19 Erasing redundant Qt headers
+- ff4a6d7 Replacing accidental Ukrainian word inserted to README.md
+- 26e3781 Refining Application UTs
+- 360716e Marking the correct current branch in the READMEs
+- 3738044 Introducing the appQt6 branch in READMEs
+- ad36932 Introducing the Qt6 window component
 - d044fe4 Incrementing version to 0.7.0
 
 ## [app0.6.0] - 2025-03-14
@@ -218,10 +204,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [unreleased](https://github.com/yuriysydor1991/cpp-app-template)
 
-[main0.10.0](https://github.com/yuriysydor1991/cpp-app-template/releases/tag/main0.10.0)
-[main0.9.0](https://github.com/yuriysydor1991/cpp-app-template/releases/tag/main0.9.0)
-[app0.8.0](https://github.com/yuriysydor1991/cpp-app-template/releases/tag/app0.8.0)
-[app0.7.0](https://github.com/yuriysydor1991/cpp-app-template/releases/tag/app0.7.0)
+[appQt60.8.0](https://github.com/yuriysydor1991/cpp-app-template/releases/tag/appQt60.8.0)
+[appQt60.7.0](https://github.com/yuriysydor1991/cpp-app-template/releases/tag/appQt60.7.0)
 [app0.6.0](https://github.com/yuriysydor1991/cpp-app-template/releases/tag/app0.6.0)
 [app0.5.0](https://github.com/yuriysydor1991/cpp-app-template/releases/tag/app0.5.0)
 [app0.4.0](https://github.com/yuriysydor1991/cpp-app-template/releases/tag/app0.4.0)
