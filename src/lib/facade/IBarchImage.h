@@ -43,6 +43,8 @@ class IBarchImage : public std::enable_shared_from_this<IBarchImage>
   virtual barchdata line(const size_t& row) const = 0;
 
   virtual void append_line(const barchdata& nline) = 0;
+  
+  virtual void clear() = 0;
 };
 
 using IBarchImagePtr = IBarchImage::IBarchImagePtr;

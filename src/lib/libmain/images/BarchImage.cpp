@@ -82,4 +82,13 @@ void BarchImage::lines_table(linestable&& ntable)
 
 const linestable& BarchImage::lines_table() const { return linest; }
 
+void BMPImage::clear()
+{
+  mwidth = 0U;
+  mheight = 0U;
+  mpath.clear();
+  mdata.clear();
+  linest.clear();
+}
+
 }  // namespace barchclib0

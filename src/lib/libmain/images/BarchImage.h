@@ -54,6 +54,8 @@ class BarchImage : public std::enable_shared_from_this<BarchImage>,
   virtual void lines_table(const linestable& ntable);
   virtual void lines_table(linestable&& ntable);
   virtual const linestable& lines_table() const;
+  
+  virtual void clear() override;
 
  private:
   size_t mwidth{0};

@@ -133,4 +133,13 @@ void BMPImage::append_line(const barchdata& nline)
   mheight++;
 }
 
+void BMPImage::clear()
+{
+  mwidth = 0U;
+  mheight = 0U;
+  mbitspp = default_bits_per_pix;
+  mpath.clear();
+  mdata.clear();
+}
+
 }  // namespace barchclib0
