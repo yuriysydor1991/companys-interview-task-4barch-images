@@ -1,4 +1,4 @@
-#include "src/lib/libmain/BarchImage.h"
+#include "src/lib/libmain/images/BarchImage.h"
 
 #include <cstddef>
 #include <memory>

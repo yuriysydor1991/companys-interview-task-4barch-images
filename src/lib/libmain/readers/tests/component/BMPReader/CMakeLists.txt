@@ -6,7 +6,7 @@ add_executable(
   BMPReaderDataProvider_i1.cpp
   BMPReaderDataProvider_i2.cpp
   ${CMAKE_SOURCE_DIR}/src/lib/libmain/readers/BMPReader.cpp
-  ${CMAKE_SOURCE_DIR}/src/lib/libmain/BMPImage.cpp
+  ${CMAKE_SOURCE_DIR}/src/lib/libmain/images/BMPImage.cpp
 )
 
 target_include_directories(

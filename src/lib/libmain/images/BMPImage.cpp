@@ -1,4 +1,4 @@
-#include "src/lib/libmain/BMPImage.h"
+#include "src/lib/libmain/images/BMPImage.h"
 
 #include <cassert>
 #include <cstddef>

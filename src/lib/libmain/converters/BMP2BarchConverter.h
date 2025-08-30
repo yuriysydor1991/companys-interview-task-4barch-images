@@ -5,8 +5,8 @@
 #include <vector>
 
 #include "src/lib/facade/IBarchImage.h"
-#include "src/lib/libmain/BMPImage.h"
-#include "src/lib/libmain/BarchImage.h"
+#include "src/lib/libmain/images/BMPImage.h"
+#include "src/lib/libmain/images/BarchImage.h"
 
 namespace barchclib0::converters
 {

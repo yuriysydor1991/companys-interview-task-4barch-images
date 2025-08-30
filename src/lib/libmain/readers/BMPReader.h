@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 
-#include "src/lib/libmain/BMPImage.h"
+#include "src/lib/libmain/images/BMPImage.h"
 
 namespace barchclib0::readers
 {

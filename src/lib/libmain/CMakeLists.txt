@@ -5,11 +5,10 @@ target_sources(
   PRIVATE 
     LibMain.cpp
     LibFactory.cpp
-    BMPImage.cpp
-    BarchImage.cpp
 )
 
 add_subdirectory(tests)
 add_subdirectory(readers)
 add_subdirectory(converters)
+add_subdirectory(images)
 
