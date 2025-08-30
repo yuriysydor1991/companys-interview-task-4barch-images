@@ -274,6 +274,30 @@ TEST_F(UTEST_BMPImage, check_set_pixels_success)
   EXPECT_TRUE(atleast1);
 }
 
+TEST_F(UTEST_BMPImage, check_get_zero_line_correct_size_success)
+{
+  bool invalid = false;
+  bool atleast1 = false;
+
+  for (size_t width = 0U; width < testsReps && !invalid; ++width) {
+    for (size_t height = 0U; height < testsReps && !invalid; ++height) {
+      fill_zeros(width, height);
+
+      for (size_t h = 0U; h < bmp->height() && !invalid; ++h) {
+        auto line = bmp->line(h);
+        
+        EXPECT_EQ(line.size(), bmp->width());
+        
+        atleast1 = true;
+        
+        if (line.size() != width) { invalid = true ; }
+      }
+    }
+  }
+
+  EXPECT_TRUE(atleast1);
+}
+
 TEST_F(UTEST_BMPImage, check_get_nonzero_line_success)
 {
   bool invalid = false;
@@ -298,6 +322,8 @@ TEST_F(UTEST_BMPImage, check_get_nonzero_line_success)
 
       for (size_t rindex = 0U; rindex < bmp->height(); ++rindex) {
         auto line = bmp->line(rindex);
+        
+        EXPECT_EQ(line.size(), bmp->width());
 
         for (const auto& val : line) {
           if (rindex == hi) {

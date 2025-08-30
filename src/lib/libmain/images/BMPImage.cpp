@@ -121,7 +121,7 @@ barchdata BMPImage::line(const size_t& row) const
   }
 
   const auto startI = mdata.begin() + get_data_index(0U, row);
-  const auto endI = mdata.begin() + get_data_index(width() - 1U, row);
+  const auto endI = mdata.begin() + get_data_index(width(), row);
 
   return barchdata(startI, endI);
 }

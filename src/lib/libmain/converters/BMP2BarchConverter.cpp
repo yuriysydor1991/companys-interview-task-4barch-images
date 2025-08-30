@@ -50,7 +50,7 @@ BarchImagePtr BMP2BarchConverter::convert(BMPImagePtr bmp)
     return {};
   }
 
-  if (supported_bits_per_color(bmp->bits_per_pixel())) {
+  if (!supported_bits_per_color(bmp->bits_per_pixel())) {
     LOGE("Multicolor BGR images are not supported");
     return {};
   }
@@ -73,6 +73,7 @@ BarchImagePtr BMP2BarchConverter::convert(BMPImagePtr bmp)
     auto line = bmp->line(liter);
 
     if (liter < lines.size() && lines[liter]) {
+      LOGT("Compressing line " << liter);
       line = compress(line);
     }
 

@@ -82,35 +82,37 @@ TEST_F(UTEST_BMP2BarchConverter,
   EXPECT_THROW({ auto unused = conv->convert(bmp); }, std::runtime_error);
 }
 
-TEST_F(UTEST_BMP2BarchConverter, single_row_image_convert_no_convert_success)
+TEST_F(UTEST_BMP2BarchConverter, single_row_arbitrary_image_convert_no_convert_success)
 {
-  for (size_t titer = 0U; titer < testsReps; ++titer) {
-    auto bmp = BMPImage::create();
-    EXPECT_NE(bmp, nullptr);
+  for (unsigned char cval = 0U; cval < 255U; ++cval) {
+    for (size_t titer = 1U; titer < testsReps; ++titer) {
+      auto bmp = BMPImage::create();
+      EXPECT_NE(bmp, nullptr);
 
-    bmp->width(titer + 1);
-    bmp->height(1);
+      bmp->width(titer);
+      bmp->height(1);
 
-    barchdata zeros(bmp->width(), static_cast<unsigned char>(0));
+      barchdata zeros(bmp->width(), cval);
 
-    bmp->data(zeros);
+      bmp->data(zeros);
 
-    auto barch = conv->convert(bmp);
+      auto barch = conv->convert(bmp);
 
-    EXPECT_NE(barch, nullptr);
+      EXPECT_NE(barch, nullptr);
 
-    auto linest = barch->lines_table();
+      auto linest = barch->lines_table();
 
-    EXPECT_EQ(linest.size(), 1);
+      EXPECT_EQ(linest.size(), 1);
 
-    EXPECT_FALSE(linest[0U]);
+      EXPECT_FALSE(linest[0U]);
 
-    auto bd = barch->data();
+      auto bd = barch->data();
 
-    EXPECT_EQ(bd.size(), titer + 1);
+      EXPECT_EQ(bd.size(), zeros.size());
 
-    for (size_t liter = 0U; liter < bd.size(); ++liter) {
-      EXPECT_EQ(bd[liter], 0);
+      for (size_t liter = 0U; liter < bd.size(); ++liter) {
+        EXPECT_EQ(bd[liter], cval);
+      }
     }
   }
 }
