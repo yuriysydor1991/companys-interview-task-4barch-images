@@ -7,3 +7,5 @@ target_sources(
     BarchImage.cpp
 )
 
+add_subdirectory(tests)
+
