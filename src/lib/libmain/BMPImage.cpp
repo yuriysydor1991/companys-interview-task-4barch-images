@@ -126,4 +126,11 @@ barchdata BMPImage::line(const size_t& row) const
   return barchdata(startI, endI);
 }
 
+void BMPImage::append_line(const barchdata& nline)
+{
+  mdata.insert(mdata.end(), nline.cbegin(), nline.cend());
+  
+  mheight ++ ;
+}
+
 }  // namespace barchclib0

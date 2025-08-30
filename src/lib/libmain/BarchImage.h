@@ -18,6 +18,7 @@ class BarchImage : public std::enable_shared_from_this<BarchImage>,
 {
  public:
   using BarchImagePtr = std::shared_ptr<BarchImage>;
+  using barchscans = std::vector<barchdata>;
 
   virtual ~BarchImage() = default;
   BarchImage() = default;
@@ -38,11 +39,18 @@ class BarchImage : public std::enable_shared_from_this<BarchImage>,
   virtual void data(const barchdata& ndata) override;
   virtual void data(barchdata&& ndata) override;
 
+  virtual PixelPtr pixel(const size_t& col, const size_t& row) const override;
+  virtual void pixel(const PixelPtr& nval) override;
+
+  virtual barchdata line(const size_t& row) const override;
+
+  virtual void append_line(const barchdata& nline) override;
+
  private:
   size_t mwidth{0};
   size_t mheight{0};
 
-  barchdata mdata;
+  barchscans mdata;
 };
 
 using BarchImagePtr = BarchImage::BarchImagePtr;

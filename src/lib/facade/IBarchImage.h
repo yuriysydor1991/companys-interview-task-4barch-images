@@ -40,7 +40,9 @@ class IBarchImage : public std::enable_shared_from_this<IBarchImage>
   virtual PixelPtr pixel(const size_t& col, const size_t& row) const = 0;
   virtual void pixel(const PixelPtr& nval) = 0;
 
-  virtual barchdata line(const size_t& row) const;
+  virtual barchdata line(const size_t& row) const = 0;
+
+  virtual void append_line(const barchdata& nline) = 0;
 };
 
 using IBarchImagePtr = IBarchImage::IBarchImagePtr;

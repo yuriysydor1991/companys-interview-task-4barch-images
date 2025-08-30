@@ -83,6 +83,7 @@ TEST_F(UTEST_LibraryFacade, libcall_success)
       .Times(1)
       .WillOnce(Return(libinstance));
   EXPECT_CALL(libfactory.get_real(), create_default_context()).Times(0);
+  EXPECT_CALL(*libinstance, libcall(libctx)).Times(1).WillOnce(Return(true));
 
   EXPECT_TRUE(facade->libcall(libctx));
 }

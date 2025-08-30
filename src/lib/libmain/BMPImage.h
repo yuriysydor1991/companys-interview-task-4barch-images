@@ -47,7 +47,9 @@ class BMPImage : public std::enable_shared_from_this<BMPImage>,
   virtual PixelPtr pixel(const size_t& col, const size_t& row) const override;
   virtual void pixel(const PixelPtr& nval) override;
 
-  virtual barchdata line(const size_t& row) const;
+  virtual barchdata line(const size_t& row) const override;
+
+  virtual void append_line(const barchdata& nline) override;
 
  private:
   size_t get_data_index(const size_t& col, const size_t& row) const;
