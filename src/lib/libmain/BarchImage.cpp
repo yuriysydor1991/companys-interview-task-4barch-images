@@ -73,4 +73,13 @@ void BarchImage::append_line(const barchdata& nline)
 void BarchImage::filepath(const std::filesystem::path& npath) { mpath = npath; }
 const std::filesystem::path& BarchImage::filepath() const { return mpath; }
 
+void BarchImage::lines_table(const linestable& ntable) { linest = ntable; }
+
+void BarchImage::lines_table(linestable&& ntable)
+{
+  linest = std::move(ntable);
+}
+
+const linestable& BarchImage::lines_table() const { return linest; }
+
 }  // namespace barchclib0

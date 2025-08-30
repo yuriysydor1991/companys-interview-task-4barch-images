@@ -13,8 +13,13 @@
 namespace barchclib0::writers
 {
 
-bool BarchWriter::write(BMPImagePtr image)
+bool BarchWriter::write(BartchImagePtr image)
 {
+  if (image == nullptr) {
+    LOGE("Invalid image pointer provided");
+    return false;
+  }
+  
   const auto& fpath = image->filepath();
 
   if (fpath.empty()) {
@@ -43,6 +48,10 @@ bool BarchWriter::write(BMPImagePtr image)
       LOGE("Failure to open file " << fpath);
       return false;
     }
+    
+    dstfile.write(buff.data(), static_cast<std::streamsize>(buff.size()));
+    
+    dstfile.close();
   }
   catch (const std::exception& e) {
     LOGE("Exception during file save: " << e.what() << " for a filepath "
@@ -53,7 +62,7 @@ bool BarchWriter::write(BMPImagePtr image)
   return true;
 }
 
-bool BarchWriter::write(BMPImagePtr image, barchdata& dst)
+bool BarchWriter::write(BartchImagePtr image, barchdata& dst)
 {
   if (image == nullptr) {
     LOGE("Invalid image pointer provided");
@@ -65,60 +74,42 @@ bool BarchWriter::write(BMPImagePtr image, barchdata& dst)
                                              << image->height());
     return false;
   }
+  
+  const auto& idata = image->data();
 
-  if (image->data().empty()) {
+  if (idata.empty()) {
     LOGE("Image with invalid data buffer provided");
     return false;
   }
-
-  LOGT("Initiating bool vector for " << image->height() << " images rows");
-
-  std::vector<bool> lines = analyze_lines(image);
-
-  assert(!lines.empty());
-
-  return true;
-}
-
-std::vector<bool> BarchWriter::analyze_lines(BMPImagePtr image)
-{
-  assert(image != nullptr);
-
-  std::vector<bool> lines(image->height(), false);
-
-  for (size_t crow = 0U; crow < image->height(); ++crow) {
-    const bool crowOpt = optimal_to_compress(image, crow);
-    LOGT("The image row " << (crow + 1) << " is optimal to compress: "
-                          << std::static_cast<unsigned int>(crowOpt));
-    lines[crow] = crowOpt;
+  
+  if (image->width() > max_uint32_t) {
+    LOGE("Can`t express the width of " << image->width() << " with uint32_t");
+    return false;
   }
-}
-
-bool BarchWriter::optimal_to_compress(BMPImagePtr image, const size_t& rowIndex)
-{
-  assert(image != nullptr);
-
-  unsigned int c4thsCount = 0U;
-  unsigned int c4ths = 0U;
-
-  for (size_t coli = 0U; coli < image->cols(); ++coli) {
-    auto pix = image->pixel(coli, rowIndex);
-
-    if (is_white(pix)) {
-      c4ths++;
-    }
-
-    if ((c4ths + 1) == batch_pixels_compress) {
-      c4thsCount++;
-    }
+  
+  if (image->height() > max_uint32_t) {
+    LOGE("Can`t express the height of " << image->height() << " with uint32_t");
+    return false;
   }
+  
+  dst.clear();
+  
+  const size_t reserveVal = (sizeof(uint32_t) + sizeof(uint32_t)) + image->lines_table().size() + idata.size();
+  
+  LOGT("Reserving the dst vector for " << reserveVal << " bytes required");
+  dst.reserve(reserveVal);
+  
+  const std::string ws = std::to_string(static_cast<uint32_t>(image->width()));
+  const std::string hs = std::to_string(static_cast<uint32_t>(image->height()));
+  
+  dst.insert(dst.end(), ws.begin(), ws.end());
+  dst.insert(dst.end(), hs.begin(), hs.end());
+  
+  LOGE("!!! Insert the lines table injection into the dst buffer !!!");
+  
+  dst.insert(dst.end(), idata.begin(), idata.end());
 
-  return c4thsCount >= min_opt_2_compress;
-}
-
-bool BarchWriter::is_white(const PixelPtr& pix)
-{
-  return (pix->y == 255) || (pix->b == 255 && pix->g == 255 && pix->r == 255);
+  return false;
 }
 
 }  // namespace barchclib0::writers

@@ -20,6 +20,7 @@ class BarchImage : public std::enable_shared_from_this<BarchImage>,
  public:
   using BarchImagePtr = std::shared_ptr<BarchImage>;
   using barchscans = std::vector<barchdata>;
+  using linestable = std::vector<bool>;
 
   virtual ~BarchImage() = default;
   BarchImage() = default;
@@ -50,17 +51,26 @@ class BarchImage : public std::enable_shared_from_this<BarchImage>,
 
   virtual void append_line(const barchdata& nline) override;
 
+  virtual void lines_table(const linestable& ntable);
+  virtual void lines_table(linestable&& ntable);
+  virtual const linestable& lines_table() const;
+
  private:
   size_t mwidth{0};
   size_t mheight{0};
 
   barchscans mdata;
 
+  /// @brief The compressed lines table. Vector index corresponds to line index
+  /// in the image.
+  linestable linest;
+
   std::filesystem::path mpath;
 };
 
 using BarchImagePtr = BarchImage::BarchImagePtr;
-using barchdata = BarchImage::barchdata;
+using barchscans = BarchImage::barchscans;
+using linestable = BarchImage::linestable;
 
 }  // namespace barchclib0
 

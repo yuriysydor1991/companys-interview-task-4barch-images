@@ -11,3 +11,5 @@ target_sources(
 
 add_subdirectory(tests)
 add_subdirectory(readers)
+add_subdirectory(converters)
+
