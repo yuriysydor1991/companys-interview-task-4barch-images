@@ -27,5 +27,10 @@ install(
     NAMELINK_COMPONENT Development
 )
 
+target_link_libraries(
+  ${PROJECT_BINARY_NAME}
+  ${PROJECT_LIBRARY_NAME}
+)
+
 add_subdirectory(facade)
 add_subdirectory(libmain)

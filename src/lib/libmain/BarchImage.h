@@ -2,6 +2,7 @@
 #define THE_BMP_2_BARCH_IMAGE_CODER_PROJECT_BARCHIMAGE_CLASS_H
 
 #include <cstddef>
+#include <filesystem>
 #include <memory>
 #include <vector>
 
@@ -28,16 +29,19 @@ class BarchImage : public std::enable_shared_from_this<BarchImage>,
    */
   static BarchImagePtr create();
 
-  virtual size_t width() override;
-  virtual size_t height() override;
+  virtual size_t width() const override;
+  virtual size_t height() const override;
 
-  virtual const barchdata& data() override;
+  virtual const barchdata& data() const override;
 
   virtual void width(const size_t& nwidth) override;
   virtual void height(const size_t& nheight) override;
 
   virtual void data(const barchdata& ndata) override;
   virtual void data(barchdata&& ndata) override;
+
+  virtual void filepath(const std::filesystem::path& npath) override;
+  virtual const std::filesystem::path& filepath() const override;
 
   virtual PixelPtr pixel(const size_t& col, const size_t& row) const override;
   virtual void pixel(const PixelPtr& nval) override;
@@ -51,6 +55,8 @@ class BarchImage : public std::enable_shared_from_this<BarchImage>,
   size_t mheight{0};
 
   barchscans mdata;
+
+  std::filesystem::path mpath;
 };
 
 using BarchImagePtr = BarchImage::BarchImagePtr;
