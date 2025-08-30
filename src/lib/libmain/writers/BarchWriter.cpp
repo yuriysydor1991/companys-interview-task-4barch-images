@@ -19,7 +19,7 @@ bool BarchWriter::write(BartchImagePtr image)
     LOGE("Invalid image pointer provided");
     return false;
   }
-  
+
   const auto& fpath = image->filepath();
 
   if (fpath.empty()) {
@@ -48,9 +48,9 @@ bool BarchWriter::write(BartchImagePtr image)
       LOGE("Failure to open file " << fpath);
       return false;
     }
-    
+
     dstfile.write(buff.data(), static_cast<std::streamsize>(buff.size()));
-    
+
     dstfile.close();
   }
   catch (const std::exception& e) {
@@ -74,39 +74,40 @@ bool BarchWriter::write(BartchImagePtr image, barchdata& dst)
                                              << image->height());
     return false;
   }
-  
+
   const auto& idata = image->data();
 
   if (idata.empty()) {
     LOGE("Image with invalid data buffer provided");
     return false;
   }
-  
+
   if (image->width() > max_uint32_t) {
     LOGE("Can`t express the width of " << image->width() << " with uint32_t");
     return false;
   }
-  
+
   if (image->height() > max_uint32_t) {
     LOGE("Can`t express the height of " << image->height() << " with uint32_t");
     return false;
   }
-  
+
   dst.clear();
-  
-  const size_t reserveVal = (sizeof(uint32_t) + sizeof(uint32_t)) + image->lines_table().size() + idata.size();
-  
+
+  const size_t reserveVal = (sizeof(uint32_t) + sizeof(uint32_t)) +
+                            image->lines_table().size() + idata.size();
+
   LOGT("Reserving the dst vector for " << reserveVal << " bytes required");
   dst.reserve(reserveVal);
-  
+
   const std::string ws = std::to_string(static_cast<uint32_t>(image->width()));
   const std::string hs = std::to_string(static_cast<uint32_t>(image->height()));
-  
+
   dst.insert(dst.end(), ws.begin(), ws.end());
   dst.insert(dst.end(), hs.begin(), hs.end());
-  
+
   LOGE("!!! Insert the lines table injection into the dst buffer !!!");
-  
+
   dst.insert(dst.end(), idata.begin(), idata.end());
 
   return false;

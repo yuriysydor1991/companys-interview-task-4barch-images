@@ -6,3 +6,5 @@ target_sources(
     BMP2BarchConverter.cpp
 )
 
+add_subdirectory(tests)
+

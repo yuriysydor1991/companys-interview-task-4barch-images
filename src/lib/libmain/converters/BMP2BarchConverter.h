@@ -25,7 +25,13 @@ class BMP2BarchConverter
 
   virtual BarchImagePtr convert(BMPImagePtr bmp);
 
+  static BMP2BarchConverterPtr create();
+
+ protected:
+  virtual bool supported_bits_per_color(const unsigned int& bitsc);
+
  private:
+  inline static const unsigned int supported_bits = 8U;
   inline static const unsigned int batch_pixels_compress = 4U;
   inline static const unsigned int min_opt_2_compress = 2U;
 
@@ -35,7 +41,6 @@ class BMP2BarchConverter
 
   static std::vector<bool> analyze_lines(BMPImagePtr image);
 
- private:
   static barchdata compress(const barchdata& line);
 };
 

@@ -1,9 +1,9 @@
 #include "src/lib/libmain/images/BarchImage.h"
 
 #include <cstddef>
+#include <exception>
 #include <memory>
 #include <vector>
-#include <exception>
 
 #include "src/log/log.h"
 
@@ -53,8 +53,9 @@ PixelPtr BarchImage::pixel(const size_t& col, const size_t& row) const
   return nullptr;
 }
 
-void BarchImage::pixel(const PixelPtr& nval) {
-  LOGE("Not implemented"); 
+void BarchImage::pixel(const PixelPtr& nval)
+{
+  LOGE("Not implemented");
   throw std::runtime_error("The BarchImage::pixel not implemented");
 }
 

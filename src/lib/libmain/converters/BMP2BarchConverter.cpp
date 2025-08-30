@@ -1,18 +1,36 @@
 #include "src/lib/libmain/converters/BMP2BarchConverter.h"
 
+#include <cassert>
 #include <cmath>
 #include <exception>
 #include <filesystem>
 #include <fstream>
 #include <memory>
 #include <vector>
-#include <cassert>
 
 #include "src/lib/facade/IBarchImage.h"
 #include "src/log/log.h"
 
 namespace barchclib0::converters
 {
+
+BMP2BarchConverterPtr BMP2BarchConverter::create()
+{
+  return std::make_shared<BMP2BarchConverter>();
+}
+
+bool BMP2BarchConverter::supported_bits_per_color(const unsigned int& bitsc)
+{
+  if (bitsc == supported_bits) {
+    return true;
+  }
+
+  LOGE("Multicolor BGR images are not supported");
+
+  throw std::runtime_error("Multicolor BGR images are not supported");
+
+  return false;
+}
 
 BarchImagePtr BMP2BarchConverter::convert(BMPImagePtr bmp)
 {
@@ -32,6 +50,11 @@ BarchImagePtr BMP2BarchConverter::convert(BMPImagePtr bmp)
     return {};
   }
 
+  if (supported_bits_per_color(bmp->bits_per_pixel())) {
+    LOGE("Multicolor BGR images are not supported");
+    return {};
+  }
+
   auto barch = BarchImage::create();
 
   assert(barch != nullptr);
@@ -48,11 +71,11 @@ BarchImagePtr BMP2BarchConverter::convert(BMPImagePtr bmp)
   /* need to perform the compression */
   for (size_t liter = 0U; liter < bmp->height(); ++liter) {
     auto line = bmp->line(liter);
-    
+
     if (liter < lines.size() && lines[liter]) {
       line = compress(line);
     }
-    
+
     barch->append_line(line);
   }
 
@@ -71,7 +94,7 @@ std::vector<bool> BMP2BarchConverter::analyze_lines(BMPImagePtr image)
                           << static_cast<unsigned int>(crowOpt));
     lines[crow] = crowOpt;
   }
-  
+
   return lines;
 }
 
@@ -108,9 +131,17 @@ barchdata BMP2BarchConverter::compress(const barchdata& line)
 {
   barchdata comp;
 
-  LOGE("!!! Not implemented !!!");
+  unsigned int cwhites = 0U;
 
-  comp = line;
+  for (size_t liter = 0U; liter < line.size(); ++liter) {
+    if (line[liter] == 255) {
+      cwhites++;
+    }
+
+    if ((cwhites + 1) == min_opt_2_compress) {
+      cwhites = 0U;
+    }
+  }
 
   return comp;
 }

@@ -50,12 +50,12 @@ class BMPImage : public std::enable_shared_from_this<BMPImage>,
   virtual barchdata line(const size_t& row) const override;
 
   virtual void append_line(const barchdata& nline) override;
-  
+
   virtual void clear() override;
 
  private:
   inline static constexpr const unsigned int default_bits_per_pix = 8U;
-  
+
   size_t get_data_index(const size_t& col, const size_t& row) const;
   size_t get_data_index(const PixelPtr& pix) const;
 

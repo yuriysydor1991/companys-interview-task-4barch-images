@@ -54,7 +54,7 @@ class BarchImage : public std::enable_shared_from_this<BarchImage>,
   virtual void lines_table(const linestable& ntable);
   virtual void lines_table(linestable&& ntable);
   virtual const linestable& lines_table() const;
-  
+
   virtual void clear() override;
 
  private:
@@ -68,7 +68,7 @@ class BarchImage : public std::enable_shared_from_this<BarchImage>,
   linestable linest;
 
   std::filesystem::path mpath;
-  
+
   /// @brief for the data() method
   barchdata rdata;
 };
