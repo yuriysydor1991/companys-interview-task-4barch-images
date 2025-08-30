@@ -33,7 +33,7 @@ class BarchImage : public std::enable_shared_from_this<BarchImage>,
   virtual size_t width() const override;
   virtual size_t height() const override;
 
-  virtual const barchdata& data() const override;
+  virtual const barchdata& data() override;
 
   virtual void width(const size_t& nwidth) override;
   virtual void height(const size_t& nheight) override;
@@ -68,6 +68,9 @@ class BarchImage : public std::enable_shared_from_this<BarchImage>,
   linestable linest;
 
   std::filesystem::path mpath;
+  
+  /// @brief for the data() method
+  barchdata rdata;
 };
 
 using BarchImagePtr = BarchImage::BarchImagePtr;

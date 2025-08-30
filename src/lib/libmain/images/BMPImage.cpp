@@ -16,7 +16,7 @@ size_t BMPImage::width() const { return mwidth; }
 
 size_t BMPImage::height() const { return mheight; }
 
-const barchdata& BMPImage::data() const { return mdata; }
+const barchdata& BMPImage::data() { return mdata; }
 
 void BMPImage::width(const size_t& nwidth) { mwidth = nwidth; }
 

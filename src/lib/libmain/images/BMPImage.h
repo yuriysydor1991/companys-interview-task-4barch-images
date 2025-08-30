@@ -30,7 +30,7 @@ class BMPImage : public std::enable_shared_from_this<BMPImage>,
   virtual size_t width() const override;
   virtual size_t height() const override;
 
-  virtual const barchdata& data() const override;
+  virtual const barchdata& data() override;
 
   virtual void width(const size_t& nwidth) override;
   virtual void height(const size_t& nheight) override;

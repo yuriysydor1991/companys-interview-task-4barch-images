@@ -5,4 +5,5 @@ if (NOT ENABLE_UNIT_TESTS)
 endif()
 
 add_subdirectory(BMPImage)
+add_subdirectory(BarchImage)
 

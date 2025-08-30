@@ -26,7 +26,7 @@ class IBarchImage : public std::enable_shared_from_this<IBarchImage>
   virtual size_t width() const = 0;
   virtual size_t height() const = 0;
 
-  virtual const barchdata& data() const = 0;
+  virtual const barchdata& data() = 0;
 
   virtual void width(const size_t& nwidth) = 0;
   virtual void height(const size_t& nheight) = 0;

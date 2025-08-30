@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <memory>
 #include <vector>
+#include <exception>
 
 #include "src/log/log.h"
 
@@ -15,9 +16,9 @@ size_t BarchImage::width() const { return mwidth; }
 
 size_t BarchImage::height() const { return mheight; }
 
-const barchdata& BarchImage::data() const
+const barchdata& BarchImage::data()
 {
-  barchdata rdata;
+  rdata.clear();
 
   rdata.reserve(width() * height());
 
@@ -48,10 +49,14 @@ void BarchImage::data(barchdata&& ndata)
 PixelPtr BarchImage::pixel(const size_t& col, const size_t& row) const
 {
   LOGE("Not implemented");
+  throw std::runtime_error("The BarchImage::pixel not implemented");
   return nullptr;
 }
 
-void BarchImage::pixel(const PixelPtr& nval) { LOGE("Not implemented"); }
+void BarchImage::pixel(const PixelPtr& nval) {
+  LOGE("Not implemented"); 
+  throw std::runtime_error("The BarchImage::pixel not implemented");
+}
 
 barchdata BarchImage::line(const size_t& row) const
 {
@@ -82,7 +87,7 @@ void BarchImage::lines_table(linestable&& ntable)
 
 const linestable& BarchImage::lines_table() const { return linest; }
 
-void BMPImage::clear()
+void BarchImage::clear()
 {
   mwidth = 0U;
   mheight = 0U;
