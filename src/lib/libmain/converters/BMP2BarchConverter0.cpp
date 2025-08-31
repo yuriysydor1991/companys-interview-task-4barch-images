@@ -20,19 +20,6 @@ BMP2BarchConverter0Ptr BMP2BarchConverter0::create()
   return std::make_shared<BMP2BarchConverter0>();
 }
 
-bool BMP2BarchConverter0::supported_bits_per_color(const unsigned int& bitsc)
-{
-  if (bitsc == supported_bits) {
-    return true;
-  }
-
-  LOGE("Multicolor BGR images are not supported");
-
-  throw std::runtime_error("Multicolor BGR images are not supported");
-
-  return false;
-}
-
 BarchImagePtr BMP2BarchConverter0::convert(BMPImagePtr bmp)
 {
   if (bmp == nullptr) {
@@ -121,18 +108,18 @@ bool BMP2BarchConverter0::optimal_to_compress(BMPImagePtr image,
       c4thsW = zero;
     }
 
-    if (c4thsW >= batch_pixels_compress) {
+    if (c4thsW >= get_batch_pixels_compress()) {
       c4thsW = zero;
       c4thsWCount++;
     }
 
-    if (c4thsB >= batch_pixels_compress) {
+    if (c4thsB >= get_batch_pixels_compress()) {
       c4thsB = zero;
       c4thsBCount++;
     }
   }
 
-  return (c4thsWCount + c4thsBCount) >= min_opt_2_compress;
+  return (c4thsWCount + c4thsBCount) >= get_min_opt_2_compress();
 }
 
 bool BMP2BarchConverter0::is_white(const PixelPtr& pix)
@@ -198,8 +185,8 @@ barchdata BMP2BarchConverter0::huffman_compress(const barchdata& line)
 
   while (liter < line.cend()) {
     barchdata::const_iterator enditer =
-        std::distance(liter, line.cend()) >= batch_pixels_compress
-            ? (liter + batch_pixels_compress)
+        std::distance(liter, line.cend()) >= get_batch_pixels_compress()
+            ? (liter + get_batch_pixels_compress())
             : line.cend();
 
     auto ccodedline = get_encoded(liter, enditer, dst, dst_left);
@@ -237,13 +224,13 @@ barchdata BMP2BarchConverter0::get_encoded(barchdata::const_iterator begin,
 {
   LOGT("Iters distance: " << std::distance(begin, end));
 
-  assert(std::distance(begin, end) <= batch_pixels_compress);
+  assert(std::distance(begin, end) <= get_batch_pixels_compress());
 
-  if (std::distance(begin, end) < batch_pixels_compress) {
+  if (std::distance(begin, end) < get_batch_pixels_compress()) {
     LOGT("Compressing as is for unsuficient data "
          << std::distance(begin, end));
     auto rt = get_encoded_as_is(begin, end, dst, dst_left);
-    while (rt.size() != batch_pixels_compress) {
+    while (rt.size() != get_batch_pixels_compress()) {
       rt.push_back(zero);
     }
     return rt;

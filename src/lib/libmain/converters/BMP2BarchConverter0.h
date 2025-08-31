@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "src/lib/facade/IBarchImage.h"
+#include "src/lib/libmain/converters/BMPAndBarchConverter0Base.h"
 #include "src/lib/libmain/images/BMPImage.h"
 #include "src/lib/libmain/images/BarchImage.h"
 
@@ -12,10 +13,11 @@ namespace barchclib0::converters
 {
 
 /**
- * @brief The barch image writer class.
+ * @brief The BMP 2 Barch image converter class v.0.
  */
 class BMP2BarchConverter0
-    : public std::enable_shared_from_this<BMP2BarchConverter0>
+    : public std::enable_shared_from_this<BMP2BarchConverter0>,
+      virtual public BMPAndBarchConverter0Base
 {
  public:
   using BMP2BarchConverter0Ptr = std::shared_ptr<BMP2BarchConverter0>;
@@ -27,18 +29,8 @@ class BMP2BarchConverter0
 
   static BMP2BarchConverter0Ptr create();
 
- protected:
-  virtual bool supported_bits_per_color(const unsigned int& bitsc);
-
  private:
-  inline static constexpr const unsigned char zero = 0U;
-  inline static constexpr const unsigned char two_five_five = 255U;
-  inline static const unsigned int supported_bits = 8U;
-  inline static const unsigned int batch_pixels_compress = 4U;
-  inline static const unsigned int min_opt_2_compress = 2U;
-  static constexpr const unsigned char ucharbits = sizeof(unsigned char) * 8;
-
-  static bool optimal_to_compress(BMPImagePtr image, const size_t& rowIndex);
+  bool optimal_to_compress(BMPImagePtr image, const size_t& rowIndex);
 
   static bool is_white(const PixelPtr& pix);
   static bool is_black(const PixelPtr& pix);
@@ -50,13 +42,13 @@ class BMP2BarchConverter0
   static bool all_whites(barchdata::const_iterator begin,
                          barchdata::const_iterator end);
 
-  static std::vector<bool> analyze_lines(BMPImagePtr image);
+  std::vector<bool> analyze_lines(BMPImagePtr image);
 
-  static barchdata huffman_compress(const barchdata& line);
+  barchdata huffman_compress(const barchdata& line);
 
-  static barchdata get_encoded(barchdata::const_iterator begin,
-                               barchdata::const_iterator end,
-                               unsigned char& dst, unsigned char& dst_left);
+  barchdata get_encoded(barchdata::const_iterator begin,
+                        barchdata::const_iterator end, unsigned char& dst,
+                        unsigned char& dst_left);
   static barchdata get_encoded_as_is(barchdata::const_iterator begin,
                                      barchdata::const_iterator end,
                                      unsigned char& dst,

@@ -4,6 +4,7 @@ add_executable(
   UTEST_BMP2BarchConverter0
   UTEST_BMP2BarchConverter0.cpp
   ${CMAKE_SOURCE_DIR}/src/lib/libmain/converters/BMP2BarchConverter0.cpp
+  ${CMAKE_SOURCE_DIR}/src/lib/libmain/converters/BMPAndBarchConverter0Base.cpp
   ${CMAKE_SOURCE_DIR}/src/lib/libmain/images/BarchImage.cpp
   ${CMAKE_SOURCE_DIR}/src/lib/libmain/images/BMPImage.cpp
 )
