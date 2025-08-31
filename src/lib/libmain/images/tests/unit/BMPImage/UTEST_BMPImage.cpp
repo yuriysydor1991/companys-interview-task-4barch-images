@@ -285,12 +285,14 @@ TEST_F(UTEST_BMPImage, check_get_zero_line_correct_size_success)
 
       for (size_t h = 0U; h < bmp->height() && !invalid; ++h) {
         auto line = bmp->line(h);
-        
+
         EXPECT_EQ(line.size(), bmp->width());
-        
+
         atleast1 = true;
-        
-        if (line.size() != width) { invalid = true ; }
+
+        if (line.size() != width) {
+          invalid = true;
+        }
       }
     }
   }
@@ -322,7 +324,7 @@ TEST_F(UTEST_BMPImage, check_get_nonzero_line_success)
 
       for (size_t rindex = 0U; rindex < bmp->height(); ++rindex) {
         auto line = bmp->line(rindex);
-        
+
         EXPECT_EQ(line.size(), bmp->width());
 
         for (const auto& val : line) {
