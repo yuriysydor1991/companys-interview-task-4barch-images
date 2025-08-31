@@ -34,9 +34,9 @@ class Barch2BMPConverter0
   void fill_whites(barchdata& dst, const size_t& width);
   void fill_blacks(barchdata& dst, const size_t& width);
   void copy_arbitrary(barchdata& dst, const size_t& width,
-                      barchdata::const_iterator liter,
+                      barchdata::const_iterator& liter,
                       barchdata::const_iterator lend, unsigned char& cc,
-                      unsigned char ccount);
+                      unsigned char& ccount);
 
   void insert_white_pixel(barchdata& dst);
   void insert_black_pixel(barchdata& dst);

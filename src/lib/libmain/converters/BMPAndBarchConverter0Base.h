@@ -42,6 +42,12 @@ class BMPAndBarchConverter0Base
   static constexpr const unsigned char coded_as_is_left =
       coded_as_is << (ucharbits - coded_as_is_bits);
 
+  static void pack_right_bits(unsigned char& dst, unsigned char& dst_left,
+                              unsigned char& data, unsigned char& data_left);
+
+  static void pack_left_bits(unsigned char& dst, unsigned char& dst_left,
+                             unsigned char& data, unsigned char& data_left);
+
  private:
   inline static const unsigned int supported_bits = 8U;
   inline static const unsigned int batch_pixels_compress = 4U;

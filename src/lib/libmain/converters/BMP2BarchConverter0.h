@@ -57,8 +57,6 @@ class BMP2BarchConverter0
                                       unsigned char& dst_left);
   static barchdata get_encoded_whites(unsigned char& dst,
                                       unsigned char& dst_left);
-  static void pack_bits(unsigned char& dst, unsigned char& dst_left,
-                        unsigned char& data, unsigned char& data_left);
 };
 
 using BMP2BarchConverter0Ptr = BMP2BarchConverter0::BMP2BarchConverter0Ptr;

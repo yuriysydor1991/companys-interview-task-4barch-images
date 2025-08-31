@@ -257,7 +257,7 @@ barchdata BMP2BarchConverter0::get_encoded_as_is(
   unsigned char data_left = coded_as_is_bits;
 
   while (data_left > 0) {
-    pack_bits(dst, dst_left, data, data_left);
+    pack_right_bits(dst, dst_left, data, data_left);
 
     if (dst_left == zero) {
       rt.push_back(dst);
@@ -270,7 +270,7 @@ barchdata BMP2BarchConverter0::get_encoded_as_is(
   data_left = ucharbits;
 
   while (begin < end) {
-    pack_bits(dst, dst_left, data, data_left);
+    pack_right_bits(dst, dst_left, data, data_left);
 
     if (data_left == zero) {
       data_left = ucharbits;
@@ -301,7 +301,7 @@ barchdata BMP2BarchConverter0::get_encoded_blacks(unsigned char& dst,
   barchdata rt;
 
   while (data_left > 0) {
-    pack_bits(dst, dst_left, data, data_left);
+    pack_right_bits(dst, dst_left, data, data_left);
 
     if (dst_left == zero) {
       rt.push_back(dst);
@@ -323,44 +323,9 @@ barchdata BMP2BarchConverter0::get_encoded_whites(unsigned char& dst,
   unsigned char data = coded_whites;
   unsigned char data_left = coded_whites_bits;
 
-  pack_bits(dst, dst_left, data, data_left);
+  pack_right_bits(dst, dst_left, data, data_left);
 
   return {};
-}
-
-void BMP2BarchConverter0::pack_bits(unsigned char& dst, unsigned char& dst_left,
-                                    unsigned char& data,
-                                    unsigned char& data_left)
-{
-  static_assert((0B1 << 7 >> 7) == 0B1);
-  static_assert((0B11 << 6 >> 6) == 0B11);
-
-  assert(dst_left > zero);
-  assert(data_left > zero);
-
-  LOGT("Trying to pack " << std::bitset<ucharbits>(data) << " with data left "
-                         << static_cast<unsigned int>(data_left) << " into "
-                         << std::bitset<ucharbits>(dst) << " and dst left "
-                         << static_cast<unsigned int>(dst_left));
-
-  if (dst_left > data_left) {
-    dst <<= data_left;
-    dst_left -= data_left;
-    const unsigned char shifts = (ucharbits - data_left);
-    dst |= (data << shifts) >> shifts;
-    data_left = zero;
-  } else {
-    dst <<= dst_left;
-    const unsigned char shifts = (ucharbits - dst_left);
-    dst |= (data << shifts) >> shifts;
-    data_left -= dst_left;
-    dst_left = zero;
-  }
-
-  LOGT("Result: " << std::bitset<ucharbits>(dst) << " and dst left "
-                  << static_cast<unsigned int>(dst_left) << " with data "
-                  << std::bitset<ucharbits>(data) << " and bits left "
-                  << static_cast<unsigned int>(data_left));
 }
 
 }  // namespace barchclib0::converters

@@ -1,5 +1,7 @@
 #include "src/lib/libmain/converters/Barch2BMPConverter0.h"
 
+#include <bitset>
+#include <cassert>
 #include <exception>
 #include <memory>
 #include <vector>
@@ -74,29 +76,44 @@ barchdata Barch2BMPConverter0::huffman_decompress(const barchdata& src,
                                                   const size_t& width)
 {
   static_assert(leftbit == 0B10000000);
+  static_assert(static_cast<unsigned char>(
+                    static_cast<unsigned char>(0B11000000) << 2) == zero);
+  static_assert(static_cast<unsigned char>(
+                    static_cast<unsigned char>(
+                        static_cast<unsigned char>(0B11000000) << 2) >>
+                    2) == zero);
 
   barchdata rt;
 
   rt.reserve(width);
 
-  for (barchdata::const_iterator liter = src.cbegin(); liter < src.cend();
-       ++liter) {
+  for (barchdata::const_iterator liter = src.cbegin();
+       liter < src.cend() && rt.size() < width; ++liter) {
     unsigned char cc = *liter;
     unsigned char ccount = ucharbits;
 
-    if ((cc & coded_blacks_left) == coded_blacks_left) {
-      // fill blacks
-      fill_blacks(rt, width);
-      cc <<= coded_blacks_bits;
-      ccount -= coded_blacks_bits;
-    } else if ((cc & coded_whites) == coded_whites) {
-      // fill whites
-      fill_whites(rt, width);
-      cc <<= coded_whites_bits;
-      ccount -= coded_whites_bits;
-    } else if ((cc & leftbit) == zero && (cc << 1 & leftbit) == leftbit) {
-      // fill arbitrary pixels
-      copy_arbitrary(rt, width, liter, src.cend(), cc, ccount);
+    while (ccount > 0 && rt.size() < width && liter < src.cend()) {
+      LOGT("checking " << std::bitset<ucharbits>(cc) << ") with left "
+                       << static_cast<unsigned int>(ccount));
+      if ((cc & coded_as_is_left) == coded_as_is_left) {
+        cc <<= coded_as_is_bits;
+        ccount -= coded_as_is_bits;
+        copy_arbitrary(rt, width, liter, src.cend(), cc, ccount);
+      } else if ((cc & coded_blacks_left) == coded_blacks_left) {
+        fill_blacks(rt, width);
+        cc <<= coded_blacks_bits;
+        ccount -= coded_blacks_bits;
+      } else if ((cc & leftbit) == zero) {
+        fill_whites(rt, width);
+        cc <<= coded_whites_bits;
+        ccount -= coded_whites_bits;
+      }
+
+      LOGT("result size " << rt.size());
+
+      if (rt.size() + 1U == width) {
+        break;
+      }
     }
   }
 
@@ -122,20 +139,61 @@ void Barch2BMPConverter0::fill_blacks(barchdata& dst, const size_t& width)
 }
 
 void Barch2BMPConverter0::copy_arbitrary(barchdata& dst, const size_t& width,
-                                         barchdata::const_iterator liter,
+                                         barchdata::const_iterator& liter,
                                          barchdata::const_iterator lend,
                                          unsigned char& cc,
-                                         unsigned char ccount)
+                                         unsigned char& ccount)
 {
+  LOGT("Trying to fill arbitrary pixels");
+
+  assert(liter < lend);
+
+  unsigned char bytes_inserted = zero;
+
+  if (ccount == zero) {
+    liter++;
+    if (liter >= lend) {
+      LOGW("No data left");
+      return;
+    }
+    cc = *liter;
+    ccount = ucharbits;
+    bytes_inserted++;
+  }
+
+  unsigned char data = zero;
+  unsigned char data_left = ucharbits;
+
+  while (liter < lend && dst.size() < width &&
+         bytes_inserted < get_batch_pixels_compress()) {
+    pack_left_bits(data, data_left, cc, ccount);
+
+    if (data_left == zero) {
+      dst.emplace_back(data);
+      data = zero;
+      data_left = ucharbits;
+      bytes_inserted++;
+    }
+
+    if (ccount == zero) {
+      liter++;
+      cc = *liter;
+      ccount = ucharbits;
+    }
+  }
 }
 
 void Barch2BMPConverter0::insert_white_pixel(barchdata& dst)
 {
+  LOGT("fill whites");
+
   insert_pixel(dst, two_five_five);
 }
 
 void Barch2BMPConverter0::insert_black_pixel(barchdata& dst)
 {
+  LOGT("fill blacks");
+
   insert_pixel(dst, zero);
 }
 
