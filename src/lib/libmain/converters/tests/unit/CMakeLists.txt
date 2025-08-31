@@ -5,4 +5,5 @@ if (NOT ENABLE_UNIT_TESTS)
 endif()
 
 add_subdirectory(BMP2BarchConverter)
+add_subdirectory(Barch2BMPConverter0)
 

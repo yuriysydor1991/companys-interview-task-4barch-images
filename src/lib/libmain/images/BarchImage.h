@@ -55,11 +55,18 @@ class BarchImage : public std::enable_shared_from_this<BarchImage>,
   virtual void lines_table(linestable&& ntable);
   virtual const linestable& lines_table() const;
 
+  virtual unsigned int bits_per_pixel();
+  virtual void bits_per_pixel(const unsigned int& nbits);
+
   virtual void clear() override;
 
  private:
+  inline static constexpr const unsigned int default_bits_per_pix = 8U;
+
   size_t mwidth{0};
   size_t mheight{0};
+
+  unsigned int mbitspp{default_bits_per_pix};
 
   barchscans mdata;
 

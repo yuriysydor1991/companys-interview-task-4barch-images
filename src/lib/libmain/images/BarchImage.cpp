@@ -59,6 +59,10 @@ void BarchImage::pixel(const PixelPtr& nval)
   throw std::runtime_error("The BarchImage::pixel not implemented");
 }
 
+unsigned int BarchImage::bits_per_pixel() { return mbitspp; }
+
+void BarchImage::bits_per_pixel(const unsigned int& nbits) { mbitspp = nbits; }
+
 barchdata BarchImage::line(const size_t& row) const
 {
   if (mdata.size() <= row) {

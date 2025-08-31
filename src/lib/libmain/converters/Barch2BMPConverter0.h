@@ -29,6 +29,18 @@ class Barch2BMPConverter0
   static Barch2BMPConverter0Ptr create();
 
  private:
+  barchdata huffman_decompress(const barchdata& src, const size_t& width);
+
+  void fill_whites(barchdata& dst, const size_t& width);
+  void fill_blacks(barchdata& dst, const size_t& width);
+  void copy_arbitrary(barchdata& dst, const size_t& width,
+                      barchdata::const_iterator liter,
+                      barchdata::const_iterator lend, unsigned char& cc,
+                      unsigned char ccount);
+
+  void insert_white_pixel(barchdata& dst);
+  void insert_black_pixel(barchdata& dst);
+  void insert_pixel(barchdata& dst, const int& color);
 };
 
 using Barch2BMPConverter0Ptr = Barch2BMPConverter0::Barch2BMPConverter0Ptr;

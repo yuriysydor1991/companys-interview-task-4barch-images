@@ -25,8 +25,22 @@ class BMPAndBarchConverter0Base
  protected:
   inline static constexpr const unsigned char zero = 0U;
   inline static constexpr const unsigned char two_five_five = 255U;
+  inline static constexpr const unsigned char leftbit = 1 << 7;
   inline static constexpr const unsigned char ucharbits =
       sizeof(unsigned char) * 8;
+
+  static constexpr const unsigned char coded_whites = zero;
+  static constexpr const unsigned char coded_whites_bits = 1U;
+
+  static constexpr const unsigned char coded_blacks = 0B10;
+  static constexpr const unsigned char coded_blacks_bits = 2U;
+  static constexpr const unsigned char coded_blacks_left =
+      coded_blacks << (ucharbits - coded_blacks_bits);
+
+  static constexpr const unsigned char coded_as_is = 0B11;
+  static constexpr const unsigned char coded_as_is_bits = 2U;
+  static constexpr const unsigned char coded_as_is_left =
+      coded_as_is << (ucharbits - coded_as_is_bits);
 
  private:
   inline static const unsigned int supported_bits = 8U;

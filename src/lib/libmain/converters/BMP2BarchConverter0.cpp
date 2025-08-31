@@ -249,9 +249,6 @@ barchdata BMP2BarchConverter0::get_encoded_as_is(
     barchdata::const_iterator begin, barchdata::const_iterator end,
     unsigned char& dst, unsigned char& dst_left)
 {
-  static constexpr const unsigned char coded_as_is = 0B11;
-  static constexpr const unsigned char coded_as_is_bits = 2U;
-
   barchdata rt;
 
   LOGT("Compressing as is for unsuficient data " << std::distance(begin, end));
@@ -296,9 +293,6 @@ barchdata BMP2BarchConverter0::get_encoded_blacks(unsigned char& dst,
 {
   assert(dst_left > zero);
 
-  static constexpr const unsigned char coded_blacks = 0B10;
-  static constexpr const unsigned char coded_blacks_bits = 2U;
-
   LOGT("Coding as blacks");
 
   unsigned char data = coded_blacks;
@@ -323,9 +317,6 @@ barchdata BMP2BarchConverter0::get_encoded_whites(unsigned char& dst,
                                                   unsigned char& dst_left)
 {
   assert(dst_left > zero);
-
-  static constexpr const unsigned char coded_whites = zero;
-  static constexpr const unsigned char coded_whites_bits = 1U;
 
   LOGT("Coding as whites");
 
