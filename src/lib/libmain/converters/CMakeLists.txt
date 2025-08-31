@@ -5,6 +5,7 @@ target_sources(
   PRIVATE 
     BMP2BarchConverter0.cpp
     BMPAndBarchConverter0Base.cpp
+    Barch2BMPConverter0.cpp
 )
 
 add_subdirectory(tests)
