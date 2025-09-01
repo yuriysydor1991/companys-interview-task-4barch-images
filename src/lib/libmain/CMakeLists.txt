@@ -11,4 +11,5 @@ add_subdirectory(tests)
 add_subdirectory(readers)
 add_subdirectory(converters)
 add_subdirectory(images)
+add_subdirectory(writers)
 

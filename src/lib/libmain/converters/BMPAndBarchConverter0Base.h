@@ -45,6 +45,9 @@ class BMPAndBarchConverter0Base
   static void pack_left_bits(unsigned char& dst, unsigned char& dst_left,
                              unsigned char& data, unsigned char& data_left);
 
+  // for writers/readers
+  inline static const char* const BARCH0_STARTER = "BA001";
+
  private:
   inline static const unsigned int supported_bits = 8U;
   inline static const unsigned int batch_pixels_compress = 4U;
