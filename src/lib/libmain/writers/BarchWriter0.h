@@ -25,6 +25,7 @@ class BarchWriter0 : public std::enable_shared_from_this<BarchWriter0>,
   BarchWriter0() = default;
 
   virtual bool write(BarchImagePtr image);
+  virtual bool write(BarchImagePtr image, const std::filesystem::path& dstpath);
 
   static BarchWriter0Ptr create();
 

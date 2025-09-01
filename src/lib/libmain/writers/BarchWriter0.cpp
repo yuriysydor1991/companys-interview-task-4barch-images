@@ -1,5 +1,8 @@
 #include "src/lib/libmain/writers/BarchWriter0.h"
 
+#include <errno.h>
+#include <string.h>
+
 #include <cassert>
 #include <cmath>
 #include <exception>
@@ -7,6 +10,7 @@
 #include <fstream>
 #include <memory>
 #include <vector>
+#include <bitset>
 
 #include "src/lib/facade/IBarchImage.h"
 #include "src/log/log.h"
@@ -26,23 +30,34 @@ bool BarchWriter0::write(BarchImagePtr image)
     return false;
   }
 
-  const auto& fpath = image->filepath();
+  return write(image, image->filepath());
+}
 
-  if (fpath.empty()) {
+bool BarchWriter0::write(BarchImagePtr image,
+                         const std::filesystem::path& dstpath)
+{
+  if (image == nullptr) {
+    LOGE("Invalid image pointer provided");
+    return false;
+  }
+
+  if (dstpath.empty()) {
     LOGE("No dst file path provided for an image to save");
     return false;
   }
 
   try {
-    std::ofstream dstfile(fpath, std::ofstream::binary | std::ofstream::trunc);
+    LOGT("Trying to open file " << dstpath);
+    std::ofstream dstfile(dstpath,
+                          std::ofstream::binary | std::ofstream::trunc);
 
     if (!dstfile.is_open()) {
-      LOGE("Failure to open file " << fpath);
+      LOGE("Failure to open file " << dstpath);
       return false;
     }
 
     if (!write(image, dstfile)) {
-      LOGE("Fail to write image to the buffer");
+      LOGE("Fail to write image to the file");
       dstfile.close();
       return false;
     }
@@ -51,9 +66,11 @@ bool BarchWriter0::write(BarchImagePtr image)
   }
   catch (const std::exception& e) {
     LOGE("Exception during file save: " << e.what() << " for a filepath "
-                                        << fpath);
+                                        << dstpath);
     return false;
   }
+
+  image->filepath(dstpath);
 
   return true;
 }
@@ -102,8 +119,11 @@ bool BarchWriter0::write(BarchImagePtr image, std::ofstream& dst)
 
   dst << BARCH0_STARTER;
 
-  dst << static_cast<uint32_t>(image->width());
-  dst << static_cast<uint32_t>(image->height());
+  uint32_t tdim = static_cast<uint32_t>(image->width());
+  dst.write(reinterpret_cast<char*>(&tdim), sizeof(uint32_t));
+
+  tdim = static_cast<uint32_t>(image->height());
+  dst.write(reinterpret_cast<char*>(&tdim), sizeof(uint32_t));
 
   barchdata linesdata = collect_lines_data(image);
 
@@ -121,7 +141,7 @@ bool BarchWriter0::write(BarchImagePtr image, std::ofstream& dst)
     return false;
   }
 
-  return false;
+  return true;
 }
 
 barchdata BarchWriter0::collect_lines_data(BarchImagePtr image)
@@ -135,12 +155,14 @@ barchdata BarchWriter0::collect_lines_data(BarchImagePtr image)
   unsigned char data_left = ucharbits;
 
   for (const bool& b : image->lines_table()) {
-    unsigned char bc = static_cast<unsigned char>(b);
-
-    data |= bc;
+    data <<= 1;
+    if (b) {
+      data |= 1U;
+    }
     data_left--;
 
     if (data_left == 0) {
+      LOGT("Emplacing: " << std::bitset<8>(data));
       linesdata.emplace_back(data);
       data = zero;
       data_left = ucharbits;
@@ -148,6 +170,7 @@ barchdata BarchWriter0::collect_lines_data(BarchImagePtr image)
   }
 
   if (data_left > 0 && data_left < ucharbits) {
+    data <<= data_left;
     linesdata.emplace_back(data);
     data = zero;
     data_left = ucharbits;
@@ -158,9 +181,15 @@ barchdata BarchWriter0::collect_lines_data(BarchImagePtr image)
 
 bool BarchWriter0::put_data(barchdata& data, std::ofstream& dst)
 {
-  dst.write(reinterpret_cast<char*>(data.data()), data.size());
+  dst.write(reinterpret_cast<char*>(data.data()),
+            static_cast<std::streamsize>(data.size()));
 
-  return !dst.badbit;
+  if (!dst) {
+    int err = errno;
+    LOGE("File contains failure: " << strerror(err));
+  }
+
+  return static_cast<bool>(dst);
 }
 
 }  // namespace barchclib0::writers

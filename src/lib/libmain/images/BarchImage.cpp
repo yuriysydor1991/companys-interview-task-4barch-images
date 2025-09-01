@@ -46,14 +46,15 @@ void BarchImage::data(barchdata&& ndata)
   ndata.clear();
 }
 
-PixelPtr BarchImage::pixel(const size_t& col, const size_t& row) const
+PixelPtr BarchImage::pixel([[maybe_unused]] const size_t& col,
+                           [[maybe_unused]] const size_t& row) const
 {
   LOGE("Not implemented");
   throw std::runtime_error("The BarchImage::pixel not implemented");
   return nullptr;
 }
 
-void BarchImage::pixel(const PixelPtr& nval)
+void BarchImage::pixel([[maybe_unused]] const PixelPtr& nval)
 {
   LOGE("Not implemented");
   throw std::runtime_error("The BarchImage::pixel not implemented");

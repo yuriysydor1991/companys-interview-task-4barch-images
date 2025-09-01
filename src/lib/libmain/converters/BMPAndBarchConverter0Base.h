@@ -46,7 +46,7 @@ class BMPAndBarchConverter0Base
                              unsigned char& data, unsigned char& data_left);
 
   // for writers/readers
-  inline static const char* const BARCH0_STARTER = "BA001";
+  inline static const char* const BARCH0_STARTER = "BA000";
 
  private:
   inline static const unsigned int supported_bits = 8U;
