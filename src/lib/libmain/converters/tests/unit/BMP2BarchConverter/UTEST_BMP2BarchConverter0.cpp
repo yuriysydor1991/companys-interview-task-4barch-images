@@ -17,6 +17,7 @@ class UTEST_BMP2BarchConverter0 : public Test
  public:
   static constexpr const size_t testsReps = 5U;
   static constexpr const unsigned char two_two_five = 255U;
+  static constexpr const unsigned char gray_pixel = two_two_five - 1U;
 
   UTEST_BMP2BarchConverter0() : conv{BMP2BarchConverter0::create()}
   {
@@ -454,10 +455,10 @@ TEST_F(UTEST_BMP2BarchConverter0,
   EXPECT_FALSE(bd.empty());
   EXPECT_EQ(bd.size(), 5U);
   EXPECT_EQ(bd[0], 0B01011000);
-  EXPECT_EQ(bd[1], 0B0);
-  EXPECT_EQ(bd[2], 0B0);
-  EXPECT_EQ(bd[3], 0B0);
-  EXPECT_EQ(bd[4], 0B0);
+  EXPECT_EQ(bd[1], 0B00000000);
+  EXPECT_EQ(bd[2], 0B00000000);
+  EXPECT_EQ(bd[3], 0B00000000);
+  EXPECT_EQ(bd[4], 0B00000000);
 }
 
 TEST_F(UTEST_BMP2BarchConverter0,
@@ -673,4 +674,240 @@ TEST_F(UTEST_BMP2BarchConverter0,
       EXPECT_EQ(bd[biter], 0B10101010);
     }
   }
+}
+
+TEST_F(UTEST_BMP2BarchConverter0,
+       single_row_8_white_and_4gray_pixels_convert_image_success)
+{
+  auto bmp = BMPImage::create();
+  EXPECT_NE(bmp, nullptr);
+
+  bmp->width(12);
+  bmp->height(1);
+
+  barchdata white(8U, two_two_five);
+  barchdata gray(4U, gray_pixel);
+
+  barchdata mix(white);
+  mix.insert(mix.end(), gray.begin(), gray.end());
+
+  bmp->data(mix);
+
+  auto barch = conv->convert(bmp);
+
+  EXPECT_NE(barch, nullptr);
+
+  auto linest = barch->lines_table();
+
+  EXPECT_EQ(linest.size(), 1);
+
+  EXPECT_TRUE(linest[0U]);
+
+  auto bd = barch->data();
+
+  EXPECT_FALSE(bd.empty());
+  EXPECT_EQ(bd.size(), 5U);
+  EXPECT_EQ(bd[0], 0B00111111);
+  EXPECT_EQ(bd[1], 0B11101111);
+  EXPECT_EQ(bd[2], 0B11101111);
+  EXPECT_EQ(bd[3], 0B11101111);
+  EXPECT_EQ(bd[4], 0B11100000);
+}
+
+TEST_F(UTEST_BMP2BarchConverter0,
+       single_row_8_white_and_4_1gray_pixels_convert_image_success)
+{
+  auto bmp = BMPImage::create();
+  EXPECT_NE(bmp, nullptr);
+
+  bmp->width(12);
+  bmp->height(1);
+
+  barchdata white(8U, two_two_five);
+  barchdata gray(4U, 1U);
+
+  barchdata mix(white);
+  mix.insert(mix.end(), gray.begin(), gray.end());
+
+  bmp->data(mix);
+
+  auto barch = conv->convert(bmp);
+
+  EXPECT_NE(barch, nullptr);
+
+  auto linest = barch->lines_table();
+
+  EXPECT_EQ(linest.size(), 1);
+
+  EXPECT_TRUE(linest[0U]);
+
+  auto bd = barch->data();
+
+  EXPECT_FALSE(bd.empty());
+  EXPECT_EQ(bd.size(), 5U);
+  EXPECT_EQ(bd[0], 0B00110000);
+  EXPECT_EQ(bd[1], 0B00010000);
+  EXPECT_EQ(bd[2], 0B00010000);
+  EXPECT_EQ(bd[3], 0B00010000);
+  EXPECT_EQ(bd[4], 0B00010000);
+}
+
+TEST_F(UTEST_BMP2BarchConverter0,
+       single_row_8_white_and_4_240gray_pixels_convert_image_success)
+{
+  auto bmp = BMPImage::create();
+  EXPECT_NE(bmp, nullptr);
+
+  bmp->width(12);
+  bmp->height(1);
+
+  barchdata white(8U, two_two_five);
+  barchdata gray(4U, 240U);
+
+  barchdata mix(white);
+  mix.insert(mix.end(), gray.begin(), gray.end());
+
+  bmp->data(mix);
+
+  auto barch = conv->convert(bmp);
+
+  EXPECT_NE(barch, nullptr);
+
+  auto linest = barch->lines_table();
+
+  EXPECT_EQ(linest.size(), 1);
+
+  EXPECT_TRUE(linest[0U]);
+
+  auto bd = barch->data();
+
+  EXPECT_FALSE(bd.empty());
+  EXPECT_EQ(bd.size(), 5U);
+  EXPECT_EQ(bd[0], 0B00111111);
+  EXPECT_EQ(bd[1], 0B00001111);
+  EXPECT_EQ(bd[2], 0B00001111);
+  EXPECT_EQ(bd[3], 0B00001111);
+  EXPECT_EQ(bd[4], 0B00000000);
+}
+
+TEST_F(UTEST_BMP2BarchConverter0,
+       single_row_4_240gray_and_8_white_pixels_convert_image_success)
+{
+  auto bmp = BMPImage::create();
+  EXPECT_NE(bmp, nullptr);
+
+  bmp->width(12);
+  bmp->height(1);
+
+  barchdata white(8U, two_two_five);
+  barchdata gray(4U, 240U);
+
+  barchdata mix(gray);
+  mix.insert(mix.end(), white.begin(), white.end());
+
+  bmp->data(mix);
+
+  auto barch = conv->convert(bmp);
+
+  EXPECT_NE(barch, nullptr);
+
+  auto linest = barch->lines_table();
+
+  EXPECT_EQ(linest.size(), 1);
+
+  EXPECT_TRUE(linest[0U]);
+
+  auto bd = barch->data();
+
+  EXPECT_FALSE(bd.empty());
+  EXPECT_EQ(bd.size(), 5U);
+  EXPECT_EQ(bd[0], 0B11111100);
+  EXPECT_EQ(bd[1], 0B00111100);
+  EXPECT_EQ(bd[2], 0B00111100);
+  EXPECT_EQ(bd[3], 0B00111100);
+  EXPECT_EQ(bd[4], 0B00000000);
+}
+
+TEST_F(UTEST_BMP2BarchConverter0,
+       single_row_4_240gray_and_9_white_pixels_convert_image_success)
+{
+  auto bmp = BMPImage::create();
+  EXPECT_NE(bmp, nullptr);
+
+  bmp->width(13);
+  bmp->height(1);
+
+  barchdata white(9U, two_two_five);
+  barchdata gray(4U, 240U);
+
+  barchdata mix(gray);
+  mix.insert(mix.end(), white.begin(), white.end());
+
+  bmp->data(mix);
+
+  auto barch = conv->convert(bmp);
+
+  EXPECT_NE(barch, nullptr);
+
+  auto linest = barch->lines_table();
+
+  EXPECT_EQ(linest.size(), 1);
+
+  EXPECT_TRUE(linest[0U]);
+
+  auto bd = barch->data();
+
+  EXPECT_FALSE(bd.empty());
+  EXPECT_EQ(bd.size(), 9U);
+  EXPECT_EQ(bd[0], 0B11111100);
+  EXPECT_EQ(bd[1], 0B00111100);
+  EXPECT_EQ(bd[2], 0B00111100);
+  EXPECT_EQ(bd[3], 0B00111100);
+  EXPECT_EQ(bd[4], 0B00001111);
+  EXPECT_EQ(bd[5], 0B11111100);
+  EXPECT_EQ(bd[6], 0B00000000);
+  EXPECT_EQ(bd[7], 0B00000000);
+  EXPECT_EQ(bd[8], 0B00000000);
+}
+
+TEST_F(UTEST_BMP2BarchConverter0,
+       single_row_4_240gray_and_10_white_pixels_convert_image_success)
+{
+  auto bmp = BMPImage::create();
+  EXPECT_NE(bmp, nullptr);
+
+  bmp->width(14);
+  bmp->height(1);
+
+  barchdata white(10U, two_two_five);
+  barchdata gray(4U, 240U);
+
+  barchdata mix(gray);
+  mix.insert(mix.end(), white.begin(), white.end());
+
+  bmp->data(mix);
+
+  auto barch = conv->convert(bmp);
+
+  EXPECT_NE(barch, nullptr);
+
+  auto linest = barch->lines_table();
+
+  EXPECT_EQ(linest.size(), 1);
+
+  EXPECT_TRUE(linest[0U]);
+
+  auto bd = barch->data();
+
+  EXPECT_FALSE(bd.empty());
+  EXPECT_EQ(bd.size(), 9U);
+  EXPECT_EQ(bd[0], 0B11111100);
+  EXPECT_EQ(bd[1], 0B00111100);
+  EXPECT_EQ(bd[2], 0B00111100);
+  EXPECT_EQ(bd[3], 0B00111100);
+  EXPECT_EQ(bd[4], 0B00001111);
+  EXPECT_EQ(bd[5], 0B11111111);
+  EXPECT_EQ(bd[6], 0B11111100);
+  EXPECT_EQ(bd[7], 0B00000000);
+  EXPECT_EQ(bd[8], 0B00000000);
 }

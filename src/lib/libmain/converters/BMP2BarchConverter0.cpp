@@ -230,7 +230,17 @@ barchdata BMP2BarchConverter0::get_encoded(barchdata::const_iterator begin,
     LOGT("Compressing as is for unsuficient data "
          << std::distance(begin, end));
     auto rt = get_encoded_as_is(begin, end, dst, dst_left);
+    if (dst_left > zero && dst_left < ucharbits) {
+      dst <<= dst_left;
+      LOGT("Packing last byte " << std::bitset<ucharbits>(dst) << " with "
+                                << static_cast<unsigned int>(dst_left)
+                                << " trailing bits");
+      rt.push_back(dst);
+      dst = zero;
+      dst_left = zero;
+    }
     while (rt.size() != get_batch_pixels_compress()) {
+      LOGT("Packing trailing zero byte");
       rt.push_back(zero);
     }
     return rt;
@@ -249,15 +259,15 @@ barchdata BMP2BarchConverter0::get_encoded_as_is(
     barchdata::const_iterator begin, barchdata::const_iterator end,
     unsigned char& dst, unsigned char& dst_left)
 {
+  LOGT("Coding as is");
+
   barchdata rt;
 
-  LOGT("Compressing as is for unsuficient data " << std::distance(begin, end));
-
-  unsigned char data = coded_as_is;
+  unsigned char data = coded_as_is_left;
   unsigned char data_left = coded_as_is_bits;
 
   while (data_left > 0) {
-    pack_right_bits(dst, dst_left, data, data_left);
+    pack_left_bits(dst, dst_left, data, data_left);
 
     if (dst_left == zero) {
       rt.push_back(dst);
@@ -270,7 +280,7 @@ barchdata BMP2BarchConverter0::get_encoded_as_is(
   data_left = ucharbits;
 
   while (begin < end) {
-    pack_right_bits(dst, dst_left, data, data_left);
+    pack_left_bits(dst, dst_left, data, data_left);
 
     if (data_left == zero) {
       data_left = ucharbits;
@@ -295,13 +305,13 @@ barchdata BMP2BarchConverter0::get_encoded_blacks(unsigned char& dst,
 
   LOGT("Coding as blacks");
 
-  unsigned char data = coded_blacks;
+  unsigned char data = coded_blacks_left;
   unsigned char data_left = coded_blacks_bits;
 
   barchdata rt;
 
   while (data_left > 0) {
-    pack_right_bits(dst, dst_left, data, data_left);
+    pack_left_bits(dst, dst_left, data, data_left);
 
     if (dst_left == zero) {
       rt.push_back(dst);
@@ -323,7 +333,7 @@ barchdata BMP2BarchConverter0::get_encoded_whites(unsigned char& dst,
   unsigned char data = coded_whites;
   unsigned char data_left = coded_whites_bits;
 
-  pack_right_bits(dst, dst_left, data, data_left);
+  pack_left_bits(dst, dst_left, data, data_left);
 
   return {};
 }
