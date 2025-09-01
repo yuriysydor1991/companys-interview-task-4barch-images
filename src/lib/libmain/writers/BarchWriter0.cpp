@@ -14,6 +14,11 @@
 namespace barchclib0::writers
 {
 
+BarchWriter0Ptr BarchWriter0::create()
+{
+  return std::make_shared<BarchWriter0>();
+}
+
 bool BarchWriter0::write(BarchImagePtr image)
 {
   if (image == nullptr) {

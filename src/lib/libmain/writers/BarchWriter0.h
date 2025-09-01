@@ -26,6 +26,8 @@ class BarchWriter0 : public std::enable_shared_from_this<BarchWriter0>,
 
   virtual bool write(BarchImagePtr image);
 
+  static BarchWriter0Ptr create();
+
  private:
   inline static constexpr const size_t max_uint32_t =
       static_cast<size_t>(std::numeric_limits<uint32_t>::max());

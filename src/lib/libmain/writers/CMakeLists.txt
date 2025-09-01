@@ -6,5 +6,5 @@ target_sources(
     BarchWriter0.cpp
 )
 
-#add_subdirectory(tests)
+add_subdirectory(tests)
 
