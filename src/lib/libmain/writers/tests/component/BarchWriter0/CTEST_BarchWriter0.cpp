@@ -119,7 +119,8 @@ class CTEST_BarchWriter0 : public Test
     unpacklt.reserve(barch->height());
 
     for (unsigned char fltb : filelt) {
-      for (unsigned int iter = 0U; iter < ucharbits && unpacklt.size() < barch->height(); ++iter) {
+      for (unsigned int iter = 0U;
+           iter < ucharbits && unpacklt.size() < barch->height(); ++iter) {
         unpacklt.emplace_back(static_cast<bool>(fltb & leftmostone));
         fltb <<= 1;
       }
@@ -329,8 +330,8 @@ TEST_F(CTEST_BarchWriter0, single_height_compressed_image_with_data_success)
   barch->width(testReps);
   barch->height(1);
   barch->lines_table(linestable(barch->height(), true));
-  barch->data(barchdata(std::ceil(testReps / 4U),
-                        static_cast<unsigned char>(0)));
+  barch->data(
+      barchdata(std::ceil(testReps / 4U), static_cast<unsigned char>(0)));
   barch->filepath(testbarch);
 
   EXPECT_TRUE(writer->write(barch));

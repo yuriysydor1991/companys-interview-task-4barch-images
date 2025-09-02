@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <string.h>
 
+#include <bitset>
 #include <cassert>
 #include <cmath>
 #include <exception>
@@ -10,7 +11,6 @@
 #include <fstream>
 #include <memory>
 #include <vector>
-#include <bitset>
 
 #include "src/lib/facade/IBarchImage.h"
 #include "src/log/log.h"

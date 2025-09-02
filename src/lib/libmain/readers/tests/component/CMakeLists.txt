@@ -11,4 +11,5 @@ include_directories(
 )
 
 add_subdirectory(BMPReader)
+add_subdirectory(BarchReader)
 

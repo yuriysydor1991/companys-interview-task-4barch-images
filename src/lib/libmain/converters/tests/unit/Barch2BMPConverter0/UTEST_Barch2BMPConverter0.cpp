@@ -333,7 +333,6 @@ TEST_F(UTEST_Barch2BMPConverter0, 4_1gray_pixels_decode_success)
   barchdata gray;
   linestable lt(1, true);
 
-  // 239 - 11101111
   gray.emplace_back(0B11000000);
   gray.emplace_back(0B01000000);
   gray.emplace_back(0B01000000);
@@ -371,7 +370,6 @@ TEST_F(UTEST_Barch2BMPConverter0, 8_1gray_pixels_decode_success)
   barchdata gray;
   linestable lt(1, true);
 
-  // 239 - 11101111
   gray.emplace_back(0B11000000);
   gray.emplace_back(0B01000000);
   gray.emplace_back(0B01000000);

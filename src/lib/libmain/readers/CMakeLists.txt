@@ -4,6 +4,7 @@ target_sources(
   ${PROJECT_LIBRARY_NAME}
   PRIVATE 
     BMPReader.cpp
+    BarchReader0.cpp
 )
 
 add_subdirectory(tests)
