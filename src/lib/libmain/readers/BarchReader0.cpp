@@ -1,5 +1,6 @@
 #include "src/lib/libmain/readers/BarchReader0.h"
 
+#include <bitset>
 #include <cassert>
 #include <cmath>
 #include <cstddef>
@@ -53,7 +54,7 @@ bool BarchReader0::check_file_starter(std::ifstream& f)
   f.read(starter.data(), BARCH0_STARTER_STR.size());
 
   if (!static_cast<bool>(f)) {
-    LOGE("Failure with file ");
+    LOGE("Failure with file");
     return false;
   }
 
@@ -129,11 +130,6 @@ BarchImagePtr BarchReader0::read_data(const fs::path& imagePath)
 
   f.read(reinterpret_cast<char*>(filed.data()), filed.size());
 
-  if (!static_cast<bool>(f)) {
-    LOGE("Failure with file " << imagePath);
-    return {};
-  }
-
   std::streamsize bytesRead = f.gcount();
 
   LOGT("Read " << bytesRead << " bytes from " << maxSize << " max expected");
@@ -142,9 +138,109 @@ BarchImagePtr BarchReader0::read_data(const fs::path& imagePath)
 
   f.close();
 
-  image->data(std::move(filed));
+  if (!split_lines(image, filed)) {
+    LOGE("Fail to split lines");
+    return {};
+  }
 
   return image;
+}
+
+bool BarchReader0::split_lines(BarchImagePtr barch, barchdata& idata)
+{
+  assert(barch != nullptr);
+
+  if (idata.empty()) {
+    LOGE("Empty data provided");
+    return false;
+  }
+
+  const auto lt = barch->lines_table();
+
+  for (size_t lti = 0U; lti < lt.size() && !idata.empty(); ++lti) {
+    if (lt[lti]) {
+      if (!extract_compressed_line(barch, idata)) {
+        LOGE("Fail to extract the compressed line");
+        return false;
+      }
+
+      continue;
+    }
+
+    auto idb = idata.begin();
+    auto ide = idata.begin() + barch->width();
+
+    barchdata scanline(idb, ide);
+
+    idata.erase(idb, ide);
+
+    barch->height(barch->height() - 1U);
+    barch->append_line(scanline);
+  }
+
+  return true;
+}
+
+bool BarchReader0::extract_compressed_line(BarchImagePtr barch,
+                                           barchdata& idata)
+{
+  static_assert(leftbit == 0B10000000);
+
+  LOGT("Trying to extract the compressed line with " << barch->width()
+                                                     << " max width");
+
+  size_t line_size{zero};
+  auto biter = idata.begin();
+
+  while (biter < idata.end() && line_size < barch->width()) {
+    unsigned char cc = *biter;
+    unsigned char ccleft = ucharbits;
+
+    LOGT("Taking next byte " << std::bitset<8>(cc) << " and line size is "
+                             << line_size);
+
+    while (ccleft > 0 && line_size < barch->width() && biter < idata.end()) {
+      if (cc & leftbit) {
+        if ((static_cast<unsigned char>(cc << 1) & leftbit) == leftbit) {
+          LOGT("Located grays " << get_batch_pixels_compress()
+                                << " bytes encoded");
+          // 4 grays
+          line_size += get_batch_pixels_compress();
+          // skip all other bits
+          unsigned int skips{0U};
+          while (skips++ < get_batch_pixels_compress() && biter < idata.end()) {
+            biter++;
+          }
+          cc = *biter;
+          cc <<= ucharbits - ccleft;
+        } else {
+          // 4 blacks
+          LOGT("Located " << get_batch_pixels_compress()
+                          << " black bytes encoded");
+          line_size += get_batch_pixels_compress();
+          cc <<= coded_blacks_bits;
+          ccleft -= coded_blacks_bits;
+        }
+      } else {
+        // 4 whites
+        LOGT("Located " << get_batch_pixels_compress()
+                        << " white bytes encoded");
+        line_size += get_batch_pixels_compress();
+        cc <<= coded_whites_bits;
+        ccleft -= coded_whites_bits;
+      }
+    }
+
+    ++biter;
+  }
+
+  barchdata line(idata.begin(), biter);
+  idata.erase(idata.begin(), biter);
+
+  barch->height(barch->height() - 1U);
+  barch->append_line(line);
+
+  return true;
 }
 
 bool BarchReader0::read_lines_table(BarchImagePtr barch, std::ifstream& f)

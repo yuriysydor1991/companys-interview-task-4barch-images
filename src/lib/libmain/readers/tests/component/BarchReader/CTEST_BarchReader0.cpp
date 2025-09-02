@@ -17,7 +17,7 @@ class CTEST_BarchReader0 : public Test
  public:
   inline static const std::filesystem::path testbarchdir =
       std::filesystem::temp_directory_path() / "tests" / "barch-coder" /
-      "ctests" / "CTEST_BarchReader00";
+      "ctests" / "CTEST_BarchReader0";
   inline static const std::filesystem::path testbarch =
       testbarchdir / "test.barch";
   inline static const std::string BARCH0_STARTER = "BA000";
@@ -122,7 +122,7 @@ TEST_F(CTEST_BarchReader0, read_invalid_path_failure)
       nullptr);
 }
 
-TEST_F(CTEST_BarchReader0, read_single_pix_success)
+TEST_F(CTEST_BarchReader0, read_single_line_success)
 {
   barchdata expectedData(testReps, gray_pixel);
   EXPECT_TRUE(write_file(testReps, 1, {false}, expectedData));
@@ -141,5 +141,393 @@ TEST_F(CTEST_BarchReader0, read_single_pix_success)
 
   for (size_t liter = 0U; liter < data.size(); ++liter) {
     EXPECT_EQ(data[liter], expectedData[liter]);
+  }
+}
+
+TEST_F(CTEST_BarchReader0, read_single_compressed_line_success)
+{
+  static constexpr const size_t cwidth = 16;
+
+  barchdata expectedData(1, 0U);
+  EXPECT_TRUE(write_file(cwidth, 1, {true}, expectedData));
+
+  auto barch = reader->read(testbarch);
+
+  EXPECT_NE(barch, nullptr);
+
+  EXPECT_EQ(barch->width(), cwidth);
+  EXPECT_EQ(barch->height(), 1);
+  EXPECT_EQ(barch->lines_table().size(), 1);
+  EXPECT_TRUE(barch->lines_table()[0U]);
+
+  const auto data = barch->data();
+  EXPECT_EQ(data.size(), expectedData.size());
+
+  for (size_t liter = 0U; liter < data.size(); ++liter) {
+    EXPECT_EQ(data[liter], expectedData[liter]);
+  }
+}
+
+TEST_F(CTEST_BarchReader0, read_two_white_compressed_line_success)
+{
+  static constexpr const size_t cwidth = 16;
+  static constexpr const size_t cheight = 2;
+
+  barchdata expectedData(2, 0U);
+  EXPECT_TRUE(write_file(cwidth, cheight, {true, true}, expectedData));
+
+  auto barch = reader->read(testbarch);
+
+  EXPECT_NE(barch, nullptr);
+
+  EXPECT_EQ(barch->width(), cwidth);
+  EXPECT_EQ(barch->height(), cheight);
+  EXPECT_EQ(barch->lines_table().size(), cheight);
+  EXPECT_TRUE(barch->lines_table()[0U]);
+
+  const auto data = barch->data();
+  EXPECT_EQ(data.size(), expectedData.size());
+
+  size_t hensurer = cheight;
+  size_t eiter{0U};
+  for (size_t liter = 0U; liter < barch->height(); ++liter) {
+    auto line = barch->line(liter);
+    EXPECT_EQ(line.size(), 1U);
+    hensurer--;
+    for (size_t biter = 0U; biter < line.size(); ++biter) {
+      EXPECT_EQ(line[biter], expectedData[eiter++]);
+    }
+  }
+
+  EXPECT_EQ(hensurer, 0);
+}
+
+TEST_F(CTEST_BarchReader0, read_two_blacks_compressed_line_success)
+{
+  static constexpr const size_t cwidth = 16;
+  static constexpr const size_t cheight = 2;
+
+  barchdata expectedData(2, 0B10101010);
+  EXPECT_TRUE(write_file(cwidth, cheight, {true, true}, expectedData));
+
+  auto barch = reader->read(testbarch);
+
+  EXPECT_NE(barch, nullptr);
+
+  EXPECT_EQ(barch->width(), cwidth);
+  EXPECT_EQ(barch->height(), cheight);
+  EXPECT_EQ(barch->lines_table().size(), cheight);
+  EXPECT_TRUE(barch->lines_table()[0U]);
+
+  const auto data = barch->data();
+  EXPECT_EQ(data.size(), expectedData.size());
+
+  size_t hensurer = cheight;
+  size_t eiter{0U};
+  for (size_t liter = 0U; liter < barch->height(); ++liter) {
+    auto line = barch->line(liter);
+    EXPECT_EQ(line.size(), 1U);
+    EXPECT_EQ(line[0], 0B10101010);
+    hensurer--;
+    for (size_t biter = 0U; biter < line.size(); ++biter) {
+      EXPECT_EQ(line[biter], expectedData[eiter++]);
+    }
+  }
+
+  EXPECT_EQ(hensurer, 0);
+}
+
+TEST_F(CTEST_BarchReader0, read_4whites_4grayssingle_compressed_line_success)
+{
+  static constexpr const size_t cwidth = 8;
+  static constexpr const size_t cheight = 1;
+
+  barchdata expectedData;
+  expectedData.emplace_back(0B01111111);
+  expectedData.emplace_back(0B11011111);
+  expectedData.emplace_back(0B11011111);
+  expectedData.emplace_back(0B11011111);
+  expectedData.emplace_back(0B11000000);
+
+  EXPECT_TRUE(write_file(cwidth, 1, {true}, expectedData));
+
+  auto barch = reader->read(testbarch);
+
+  EXPECT_NE(barch, nullptr);
+
+  EXPECT_EQ(barch->width(), cwidth);
+  EXPECT_EQ(barch->height(), 1);
+  EXPECT_EQ(barch->lines_table().size(), 1);
+  EXPECT_TRUE(barch->lines_table()[0U]);
+
+  const auto data = barch->data();
+  EXPECT_EQ(data.size(), expectedData.size());
+
+  for (size_t liter = 0U; liter < data.size(); ++liter) {
+    EXPECT_EQ(data[liter], expectedData[liter]);
+  }
+
+  size_t hensurer = cheight;
+  for (size_t liter = 0U; liter < barch->height(); ++liter) {
+    auto line = barch->line(liter);
+    EXPECT_EQ(line.size(), 5U);
+    hensurer--;
+  }
+
+  EXPECT_EQ(hensurer, 0);
+}
+
+TEST_F(CTEST_BarchReader0, read_4gray_4whites_ssingle_compressed_line_success)
+{
+  static constexpr const size_t cwidth = 8;
+  static constexpr const size_t cheight = 1;
+
+  barchdata expectedData;
+  expectedData.emplace_back(0B11111111);
+  expectedData.emplace_back(0B10111111);
+  expectedData.emplace_back(0B10111111);
+  expectedData.emplace_back(0B10111111);
+  expectedData.emplace_back(0B10000000);
+
+  EXPECT_TRUE(write_file(cwidth, 1, {true}, expectedData));
+
+  auto barch = reader->read(testbarch);
+
+  EXPECT_NE(barch, nullptr);
+
+  EXPECT_EQ(barch->width(), cwidth);
+  EXPECT_EQ(barch->height(), 1);
+  EXPECT_EQ(barch->lines_table().size(), 1);
+  EXPECT_TRUE(barch->lines_table()[0U]);
+
+  const auto data = barch->data();
+  EXPECT_EQ(data.size(), expectedData.size());
+
+  for (size_t liter = 0U; liter < data.size(); ++liter) {
+    EXPECT_EQ(data[liter], expectedData[liter]);
+  }
+
+  size_t hensurer = cheight;
+  for (size_t liter = 0U; liter < barch->height(); ++liter) {
+    auto line = barch->line(liter);
+    EXPECT_EQ(line.size(), 5U);
+    hensurer--;
+  }
+
+  EXPECT_EQ(hensurer, 0);
+}
+
+TEST_F(CTEST_BarchReader0,
+       read_4whites_4_blacks_4grayssingle_compressed_line_success)
+{
+  static constexpr const size_t cwidth = 12;
+  static constexpr const size_t cheight = 1;
+
+  barchdata expectedData;
+  expectedData.emplace_back(0B01011111);
+  expectedData.emplace_back(0B11110111);
+  expectedData.emplace_back(0B11110111);
+  expectedData.emplace_back(0B11110111);
+  expectedData.emplace_back(0B11110000);
+
+  EXPECT_TRUE(write_file(cwidth, 1, {true}, expectedData));
+
+  auto barch = reader->read(testbarch);
+
+  EXPECT_NE(barch, nullptr);
+
+  EXPECT_EQ(barch->width(), cwidth);
+  EXPECT_EQ(barch->height(), 1);
+  EXPECT_EQ(barch->lines_table().size(), 1);
+  EXPECT_TRUE(barch->lines_table()[0U]);
+
+  const auto data = barch->data();
+  EXPECT_EQ(data.size(), expectedData.size());
+
+  for (size_t liter = 0U; liter < data.size(); ++liter) {
+    EXPECT_EQ(data[liter], expectedData[liter]);
+  }
+
+  size_t hensurer = cheight;
+  for (size_t liter = 0U; liter < barch->height(); ++liter) {
+    auto line = barch->line(liter);
+    EXPECT_EQ(line.size(), 5U);
+    hensurer--;
+  }
+
+  EXPECT_EQ(hensurer, 0);
+}
+
+TEST_F(CTEST_BarchReader0,
+       read_4_blacks_4grays_4whites_single_compressed_line_success)
+{
+  static constexpr const size_t cwidth = 12;
+  static constexpr const size_t cheight = 1;
+
+  barchdata expectedData;
+  expectedData.emplace_back(0B10111111);
+  expectedData.emplace_back(0B11101111);
+  expectedData.emplace_back(0B11101111);
+  expectedData.emplace_back(0B11101111);
+  expectedData.emplace_back(0B11100000);
+
+  EXPECT_TRUE(write_file(cwidth, 1, {true}, expectedData));
+
+  auto barch = reader->read(testbarch);
+
+  EXPECT_NE(barch, nullptr);
+
+  EXPECT_EQ(barch->width(), cwidth);
+  EXPECT_EQ(barch->height(), cheight);
+  EXPECT_EQ(barch->lines_table().size(), cheight);
+  EXPECT_TRUE(barch->lines_table()[0U]);
+
+  const auto data = barch->data();
+  EXPECT_EQ(data.size(), expectedData.size());
+
+  for (size_t liter = 0U; liter < data.size(); ++liter) {
+    EXPECT_EQ(data[liter], expectedData[liter]);
+  }
+
+  size_t hensurer = cheight;
+  for (size_t liter = 0U; liter < barch->height(); ++liter) {
+    auto line = barch->line(liter);
+    EXPECT_EQ(line.size(), 5U);
+    hensurer--;
+  }
+
+  EXPECT_EQ(hensurer, 0);
+}
+
+TEST_F(CTEST_BarchReader0,
+       read_4_blacks_4grays_4whites_two_compressed_lines_success)
+{
+  static constexpr const size_t cwidth = 12;
+  static constexpr const size_t cheight = 2;
+
+  barchdata expectedData;
+  expectedData.emplace_back(0B10111111);
+  expectedData.emplace_back(0B11101111);
+  expectedData.emplace_back(0B11101111);
+  expectedData.emplace_back(0B11101111);
+  expectedData.emplace_back(0B11100000);
+
+  expectedData.emplace_back(0B10111111);
+  expectedData.emplace_back(0B11101111);
+  expectedData.emplace_back(0B11101111);
+  expectedData.emplace_back(0B11101111);
+  expectedData.emplace_back(0B11100000);
+
+  EXPECT_TRUE(write_file(cwidth, cheight, {true, true}, expectedData));
+
+  auto barch = reader->read(testbarch);
+
+  EXPECT_NE(barch, nullptr);
+
+  EXPECT_EQ(barch->width(), cwidth);
+  EXPECT_EQ(barch->height(), cheight);
+  EXPECT_EQ(barch->lines_table().size(), cheight);
+  EXPECT_TRUE(barch->lines_table()[0U]);
+
+  const auto data = barch->data();
+  EXPECT_EQ(data.size(), expectedData.size());
+
+  for (size_t liter = 0U; liter < data.size(); ++liter) {
+    EXPECT_EQ(data[liter], expectedData[liter]);
+  }
+
+  size_t hensurer = cheight;
+  for (size_t liter = 0U; liter < barch->height(); ++liter) {
+    auto line = barch->line(liter);
+    EXPECT_EQ(line.size(), 5U);
+    hensurer--;
+  }
+
+  EXPECT_EQ(hensurer, 0);
+}
+
+TEST_F(CTEST_BarchReader0,
+       read_4_blacks_4grays_8whites_two_compressed_lines_success)
+{
+  static constexpr const size_t cwidth = 16;
+  static constexpr const size_t cheight = 2;
+
+  barchdata expectedData;
+  expectedData.emplace_back(0B10111111);
+  expectedData.emplace_back(0B11101111);
+  expectedData.emplace_back(0B11101111);
+  expectedData.emplace_back(0B11101111);
+  expectedData.emplace_back(0B11100000);
+
+  expectedData.emplace_back(0B10111111);
+  expectedData.emplace_back(0B11101111);
+  expectedData.emplace_back(0B11101111);
+  expectedData.emplace_back(0B11101111);
+  expectedData.emplace_back(0B11100000);
+
+  EXPECT_TRUE(write_file(cwidth, cheight, {true, true}, expectedData));
+
+  auto barch = reader->read(testbarch);
+
+  EXPECT_NE(barch, nullptr);
+
+  EXPECT_EQ(barch->width(), cwidth);
+  EXPECT_EQ(barch->height(), cheight);
+  EXPECT_EQ(barch->lines_table().size(), cheight);
+  EXPECT_TRUE(barch->lines_table()[0U]);
+
+  const auto data = barch->data();
+  EXPECT_EQ(data.size(), expectedData.size());
+
+  for (size_t liter = 0U; liter < data.size(); ++liter) {
+    EXPECT_EQ(data[liter], expectedData[liter]);
+  }
+
+  size_t hensurer = cheight;
+  for (size_t liter = 0U; liter < barch->height(); ++liter) {
+    auto line = barch->line(liter);
+    EXPECT_EQ(line.size(), 5U);
+    hensurer--;
+  }
+
+  EXPECT_EQ(hensurer, 0);
+}
+
+TEST_F(CTEST_BarchReader0,
+       read_4grays_4whites_two_separate_compressed_line_success)
+{
+  static constexpr const size_t cwidth = 16;
+  static constexpr const size_t cheight = 2;
+
+  barchdata expectedData;
+  expectedData.emplace_back(0B00000000);
+  for (auto iter = 0U; iter < cwidth; ++iter) {
+    expectedData.emplace_back(gray_pixel);
+  }
+
+  EXPECT_TRUE(write_file(cwidth, cheight, {true, false}, expectedData));
+
+  auto barch = reader->read(testbarch);
+
+  EXPECT_NE(barch, nullptr);
+
+  EXPECT_EQ(barch->width(), cwidth);
+  EXPECT_EQ(barch->height(), cheight);
+  EXPECT_EQ(barch->lines_table().size(), cheight);
+  EXPECT_TRUE(barch->lines_table()[0U]);
+
+  const auto data = barch->data();
+  EXPECT_EQ(data.size(), expectedData.size());
+
+  for (size_t liter = 0U; liter < data.size(); ++liter) {
+    EXPECT_EQ(data[liter], expectedData[liter]);
+  }
+
+  EXPECT_EQ(barch->line(0).size(), 1);
+  EXPECT_EQ(barch->line(0)[0], 0);
+
+  EXPECT_EQ(barch->line(1).size(), cwidth);
+  for (auto iter = 0U; iter < cwidth; ++iter) {
+    EXPECT_EQ(barch->line(1)[iter], gray_pixel);
   }
 }

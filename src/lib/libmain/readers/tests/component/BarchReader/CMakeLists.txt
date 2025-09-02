@@ -8,10 +8,10 @@ add_executable(
   ${CMAKE_SOURCE_DIR}/src/lib/libmain/converters/BMPAndBarchConverter0Base.cpp
 )
 
+#  PRIVATE ${GENERAL_MOCKS_ROOT}/log
 target_include_directories(
   CTEST_BarchReader0
   PRIVATE ${GENERAL_MOCKS_ROOT}/LibraryContext
-  PRIVATE ${GENERAL_MOCKS_ROOT}/log
   PRIVATE ${CMAKE_SOURCE_DIR}
   PRIVATE ${CMAKE_BINARY_DIR}
   PRIVATE ${CMAKE_SOURCE_DIR}/src/lib/facade
@@ -20,6 +20,7 @@ target_include_directories(
 target_link_libraries(
   CTEST_BarchReader0
   GTest::gtest_main GTest::gmock
+  TemplateProjectSimpleLoggerObj
 )
 
 include(GoogleTest)

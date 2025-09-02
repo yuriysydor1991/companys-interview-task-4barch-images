@@ -45,6 +45,8 @@ class BarchReader0 : public std::enable_shared_from_this<BarchReader0>,
   bool check_file_starter(std::ifstream& f);
   bool read_dimentions(BarchImagePtr image, std::ifstream& f);
   bool read_lines_table(BarchImagePtr barch, std::ifstream& f);
+  bool split_lines(BarchImagePtr barch, barchdata& idata);
+  bool extract_compressed_line(BarchImagePtr barch, barchdata& idata);
 
   inline static constexpr const unsigned char leftmostone = 0B10000000;
   inline static const std::string BARCH0_STARTER_STR = BARCH0_STARTER;
