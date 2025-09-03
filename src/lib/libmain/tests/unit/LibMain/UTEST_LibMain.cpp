@@ -11,17 +11,12 @@ using namespace testing;
 class UTEST_LibMain : public Test
 {
  public:
-  UTEST_LibMain() : libmain{std::make_shared<LibMain>()} {}
+  UTEST_LibMain() : libmain{std::make_shared<LibMain>()}
+  {
+    EXPECT_NE(libmain, nullptr);
+  }
 
   std::shared_ptr<LibMain> libmain;
 };
 
-TEST_F(UTEST_LibMain, libcall_no_context_failure)
-{
-  EXPECT_FALSE(libmain->libcall({}));
-}
-
-TEST_F(UTEST_LibMain, libcall_success)
-{
-  EXPECT_TRUE(libmain->libcall(std::make_shared<LibraryContext>()));
-}
+TEST_F(UTEST_LibMain, dumm_test) { EXPECT_NE(libmain, nullptr); }

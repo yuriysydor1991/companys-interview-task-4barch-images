@@ -3,34 +3,40 @@
 
 #include <memory>
 
-#include "src/lib/facade/ILib.h"
-#include "src/lib/facade/LibraryContext.h"
+#include "IBarchImage.h"
+#include "ILib.h"
 
 namespace lib0impl
 {
 
-/**
- * @brief The default template project library implementation class.
- * Class is designed to hold the main library implementation code. So, put
- * a new code inside of a current class' libcall method.
- */
-class LibMain : public barchclib0::ILib
+class LibMain : virtual public barchclib0::ILib
 {
  public:
+  using IBarchImagePtr = barchclib0::IBarchImagePtr;
+  using LibMainPtr = std::shared_ptr<LibMain>;
+
   virtual ~LibMain() = default;
   LibMain();
 
-  /**
-   * @brief The implemented library interface method derived from an ILib
-   * abstract class. Designed to contain the main library code implementation.
-   *
-   * @param ctx A filled LibraryContext instance with appropriate data
-   * to perform it's actions.
-   *
-   * @return Returns a true value on the success and false in case of any error.
-   */
-  virtual bool libcall(std::shared_ptr<LibraryContext> ctx) override;
+  /// @brief Converts the given BMP file IBarchImage instance into the barch
+  virtual bool bmp_to_barch(IBarchImagePtr barch) override;
+
+  /// @brief Converts the given barch file IBarchImage instance into the BMP
+  virtual bool barch_to_bmp(IBarchImagePtr barch) override;
+
+  /// @brief Tries to read image by given filepath. BMP and barch only!
+  virtual IBarchImagePtr read(const std::filesystem::path& imagePath) override;
+
+  /// @brief Tries to write barch data into given file. Barch only!
+  virtual bool write(IBarchImagePtr barch) override;
+
+  virtual ILibPtr duplicate() override;
+
+  static LibMainPtr create();
 };
+
+using IBarchImagePtr = LibMain::IBarchImagePtr;
+using LibMainPtr = LibMain::LibMainPtr;
 
 }  // namespace lib0impl
 

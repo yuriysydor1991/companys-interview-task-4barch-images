@@ -8,28 +8,19 @@
 namespace lib0impl
 {
 
-LibMain::LibMain()
-{
-  static bool inited{false};
+bool LibMain::bmp_to_barch(IBarchImagePtr barch) { return false; }
 
-  if (!inited) {
-    LOG_INIT_DEFAULTS();
-    inited = true;
-  }
+bool LibMain::barch_to_bmp(IBarchImagePtr barch) { return false; }
+
+IBarchImagePtr LibMain::read(const std::filesystem::path& imagePath)
+{
+  return {};
 }
 
-bool LibMain::libcall([[maybe_unused]] std::shared_ptr<LibraryContext> ctx)
-{
-  assert(ctx != nullptr);
+bool LibMain::write(IBarchImagePtr barch) { return false; }
 
-  if (ctx == nullptr) {
-    LOGE("No valid library context pointer provided");
-    return false;
-  }
+LibMain::ILibPtr LibMain::duplicate() { return create(); }
 
-  LOGI("Your library implementation goes here!");
-
-  return true;
-}
+LibMainPtr LibMain::create() { return std::make_shared<LibMain>(); }
 
 }  // namespace lib0impl

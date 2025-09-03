@@ -3,8 +3,7 @@
 
 #include <memory>
 
-#include "src/lib/facade/ILib.h"
-#include "src/lib/facade/LibraryContext.h"
+#include "ILib.h"
 
 namespace lib0impl
 {
@@ -18,7 +17,6 @@ class LibFactory
 {
  public:
   using ILib = barchclib0::ILib;
-  using LibraryContext = ILib::LibraryContext;
 
   virtual ~LibFactory() = default;
   LibFactory() = default;
@@ -31,25 +29,6 @@ class LibFactory
    * the LibMain class instance.
    */
   virtual std::shared_ptr<ILib> create_default_lib();
-
-  /**
-   * @brief Creates the default context to use in libraries implementation
-   * in order to provide all necessary data.
-   *
-   * @return Returns empty library context instance.
-   */
-  virtual std::shared_ptr<LibraryContext> create_default_context();
-
-  /**
-   * @brief Creates appropriate library implementation instance
-   * with accordance of provided data in the given context.
-   *
-   * @return Returns the appropriate library implementation if any
-   * or a nullptr in case of any error. Currently returns the LibMain class
-   * instance only.
-   */
-  virtual std::shared_ptr<ILib> create_appropriate_lib(
-      std::shared_ptr<LibraryContext> ctx);
 
   static std::shared_ptr<LibFactory> create_factory();
 };

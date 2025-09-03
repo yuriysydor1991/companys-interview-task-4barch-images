@@ -12,6 +12,11 @@ target_include_directories(
   INTERFACE facade
 )
 
+include_directories(
+  ${PROJECT_LIBRARY_NAME}
+  INTERFACE facade
+)
+
 set_target_properties(
   ${PROJECT_LIBRARY_NAME}
   PROPERTIES

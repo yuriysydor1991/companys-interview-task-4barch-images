@@ -9,7 +9,10 @@ using namespace testing;
 class UTEST_LibFactory : public Test
 {
  public:
-  UTEST_LibFactory() : factory{std::make_shared<LibFactory>()} {}
+  UTEST_LibFactory() : factory{LibFactory::create_factory()}
+  {
+    EXPECT_NE(factory, nullptr);
+  }
 
   std::shared_ptr<LibFactory> factory;
 };
@@ -17,14 +20,4 @@ class UTEST_LibFactory : public Test
 TEST_F(UTEST_LibFactory, create_default_lib_success)
 {
   EXPECT_NE(factory->create_default_lib(), nullptr);
-}
-
-TEST_F(UTEST_LibFactory, create_default_context_success)
-{
-  EXPECT_NE(factory->create_default_context(), nullptr);
-}
-
-TEST_F(UTEST_LibFactory, create_appropriate_lib_success)
-{
-  EXPECT_NE(factory->create_appropriate_lib({}), nullptr);
 }
