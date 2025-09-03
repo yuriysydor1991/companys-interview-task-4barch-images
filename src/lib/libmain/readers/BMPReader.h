@@ -7,16 +7,16 @@
 #include <vector>
 
 #include "src/lib/libmain/images/BMPImage.h"
+#include "src/lib/libmain/readers/IReader.h"
 
 namespace barchclib0::readers
 {
 
-namespace fs = std::filesystem;
-
 /**
  * @brief The BMP files reader class.
  */
-class BMPReader : public std::enable_shared_from_this<BMPReader>
+class BMPReader : public std::enable_shared_from_this<BMPReader>,
+                  virtual public IReader
 {
  public:
   using BMPReaderPtr = std::shared_ptr<BMPReader>;
@@ -36,6 +36,10 @@ class BMPReader : public std::enable_shared_from_this<BMPReader>
    * value in case of any error.
    */
   virtual BMPImagePtr read(const fs::path& imagePath);
+
+  virtual IBarchImagePtr unified_read(const fs::path& imagePath) override;
+
+  static bool is_bmp(const fs::path& imagePath);
 
  private:
   BMPImagePtr read_data(const fs::path& imagePath);

@@ -16,6 +16,20 @@ namespace barchclib0::readers
 
 BMPReaderPtr BMPReader::create() { return std::make_shared<BMPReader>(); }
 
+IBarchImagePtr BMPReader::unified_read(const fs::path& imagePath)
+{
+  return read(imagePath);
+}
+
+bool BMPReader::is_bmp(const fs::path& imagePath)
+{
+  static const std::string bmpe = ".bmp";
+
+  LOGT("Checking: " << imagePath.extension());
+
+  return imagePath.extension() == bmpe;
+}
+
 BMPImagePtr BMPReader::read(const fs::path& imagePath)
 {
   try {

@@ -8,17 +8,17 @@
 
 #include "src/lib/libmain/converters/BMPAndBarchConverter0Base.h"
 #include "src/lib/libmain/images/BarchImage.h"
+#include "src/lib/libmain/readers/IReader.h"
 
 namespace barchclib0::readers
 {
-
-namespace fs = std::filesystem;
 
 /**
  * @brief The BMP files reader class.
  */
 class BarchReader0 : public std::enable_shared_from_this<BarchReader0>,
-                     virtual public converters::BMPAndBarchConverter0Base
+                     virtual public converters::BMPAndBarchConverter0Base,
+                     virtual public IReader
 {
  public:
   using BarchReader0Ptr = std::shared_ptr<BarchReader0>;
@@ -38,6 +38,10 @@ class BarchReader0 : public std::enable_shared_from_this<BarchReader0>,
    * value in case of any error.
    */
   virtual BarchImagePtr read(const fs::path& imagePath);
+
+  virtual IBarchImagePtr unified_read(const fs::path& imagePath) override;
+
+  static bool is_barch(const fs::path& imagePath);
 
  private:
   BarchImagePtr read_data(const fs::path& imagePath);

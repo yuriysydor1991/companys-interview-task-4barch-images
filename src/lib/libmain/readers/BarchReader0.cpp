@@ -21,6 +21,21 @@ BarchReader0Ptr BarchReader0::create()
   return std::make_shared<BarchReader0>();
 }
 
+IBarchImagePtr BarchReader0::unified_read(const fs::path& imagePath)
+{
+  return read(imagePath);
+}
+
+bool BarchReader0::is_barch(const fs::path& imagePath)
+{
+  static const std::string ebarch = ".barch";
+  static const std::string eba = ".ba";
+
+  const fs::path cext = imagePath.extension();
+
+  return cext == ebarch || cext == eba;
+}
+
 BarchImagePtr BarchReader0::read(const fs::path& imagePath)
 {
   try {

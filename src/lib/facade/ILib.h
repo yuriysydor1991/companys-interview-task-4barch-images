@@ -18,10 +18,10 @@ class ILib
   ILib() = default;
 
   /// @brief Converts the given BMP file IBarchImage instance into the barch
-  virtual bool bmp_to_barch(IBarchImagePtr barch) = 0;
+  virtual IBarchImagePtr bmp_to_barch(IBarchImagePtr bmp) = 0;
 
   /// @brief Converts the given barch file IBarchImage instance into the BMP
-  virtual bool barch_to_bmp(IBarchImagePtr barch) = 0;
+  virtual IBarchImagePtr barch_to_bmp(IBarchImagePtr barch) = 0;
 
   /// @brief Tries to read image by given filepath. BMP and barch only!
   virtual IBarchImagePtr read(const std::filesystem::path& imagePath) = 0;
