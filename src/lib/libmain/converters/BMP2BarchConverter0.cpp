@@ -47,6 +47,8 @@ BarchImagePtr BMP2BarchConverter0::convert(BMPImagePtr bmp)
 
   assert(barch != nullptr);
 
+  barch->width(bmp->width());
+
   LOGT("Initiating bool vector for " << bmp->height() << " images rows");
 
   barch->lines_table(analyze_lines(bmp));

@@ -78,7 +78,7 @@ IBarchImagePtr LibMain::read(const std::filesystem::path& imagePath)
     return {};
   }
 
-  auto reader = barchclib0::readers::BarchReader0::create();
+  auto reader = create_reader(imagePath);
 
   if (reader == nullptr) {
     LOGE("Fail to create appropriate file reader");

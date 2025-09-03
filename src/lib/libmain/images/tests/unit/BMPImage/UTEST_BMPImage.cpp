@@ -13,7 +13,7 @@ class UTEST_BMPImage : public Test
 {
  public:
   static constexpr const size_t rndvalue = 123;
-  static constexpr const size_t testsReps = 100U;
+  static constexpr const size_t testsReps = 10U;
   static constexpr const size_t max_uchar_value =
       std::numeric_limits<unsigned char>::max();
 

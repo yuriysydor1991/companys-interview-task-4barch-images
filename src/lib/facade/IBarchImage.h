@@ -44,6 +44,9 @@ class IBarchImage : public std::enable_shared_from_this<IBarchImage>
 
   virtual void append_line(const barchdata& nline) = 0;
 
+  virtual unsigned int bits_per_pixel() = 0;
+  virtual void bits_per_pixel(const unsigned int& nbits) = 0;
+
   virtual void clear() = 0;
 };
 

@@ -1,7 +1,9 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <bitset>
 #include <cmath>
+#include <iostream>
 #include <string>
 
 #include "src/lib/libmain/converters/BMP2BarchConverter0.h"
@@ -18,6 +20,7 @@ class UTEST_BMP2BarchConverter0 : public Test
   static constexpr const size_t testsReps = 5U;
   static constexpr const unsigned char two_two_five = 255U;
   static constexpr const unsigned char gray_pixel = two_two_five - 1U;
+  static constexpr const unsigned char white_pixel = two_two_five;
 
   UTEST_BMP2BarchConverter0() : conv{BMP2BarchConverter0::create()}
   {
@@ -910,4 +913,64 @@ TEST_F(UTEST_BMP2BarchConverter0,
   EXPECT_EQ(bd[6], 0B11111100);
   EXPECT_EQ(bd[7], 0B00000000);
   EXPECT_EQ(bd[8], 0B00000000);
+}
+
+TEST_F(UTEST_BMP2BarchConverter0,
+       16whites_4_1gray_4blacks_pixels_encode_success)
+{
+  auto bmp = BMPImage::create();
+  EXPECT_NE(bmp, nullptr);
+
+  bmp->width(28U);
+  bmp->height(1);
+
+  barchdata mixed(18U, white_pixel);
+
+  mixed.push_back(0U);
+  mixed.push_back(0U);
+  mixed.push_back(0U);
+
+  for (auto iter = 0U; iter < 7U; ++iter) {
+    mixed.push_back(white_pixel);
+  }
+
+  EXPECT_EQ(bmp->width(), mixed.size());
+
+  bmp->data(mixed);
+
+  auto barch = conv->convert(bmp);
+
+  EXPECT_NE(barch, nullptr);
+
+  auto linest = barch->lines_table();
+
+  EXPECT_EQ(linest.size(), 1);
+
+  EXPECT_TRUE(linest[0U]);
+
+  const auto& bd = barch->data();
+
+  EXPECT_FALSE(bd.empty());
+
+  barchdata expected;
+
+  expected.emplace_back(0B00001111);  // 16 whites //custom started
+  expected.emplace_back(0B11111111);  // white
+  expected.emplace_back(0B11111100);  // white // black started
+  expected.emplace_back(0B00000000);  // black
+  expected.emplace_back(0B00000011);  // black // custom started
+  expected.emplace_back(0B00000000);  // black
+  expected.emplace_back(0B11111111);  // white
+  expected.emplace_back(0B11111111);  // white
+  expected.emplace_back(0B11111111);  // white
+  expected.emplace_back(0B00000000);  // whites
+
+  EXPECT_EQ(bd.size(), expected.size());
+
+  for (size_t iter = 0U; iter < bd.size() && iter < expected.size(); ++iter) {
+    std::cout << "bd[" << iter << "] -> " << std::bitset<8>(bd[iter])
+              << " ?= expected[" << iter << "] -> "
+              << std::bitset<8>(expected[iter]) << std::endl;
+    EXPECT_EQ(bd[iter], expected[iter]);
+  }
 }

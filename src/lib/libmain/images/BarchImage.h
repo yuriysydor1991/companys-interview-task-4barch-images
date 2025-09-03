@@ -55,8 +55,8 @@ class BarchImage : public std::enable_shared_from_this<BarchImage>,
   virtual void lines_table(linestable&& ntable);
   virtual const linestable& lines_table() const;
 
-  virtual unsigned int bits_per_pixel();
-  virtual void bits_per_pixel(const unsigned int& nbits);
+  virtual unsigned int bits_per_pixel() override;
+  virtual void bits_per_pixel(const unsigned int& nbits) override;
 
   virtual void clear() override;
 

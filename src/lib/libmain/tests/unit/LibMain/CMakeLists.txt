@@ -1,9 +1,18 @@
 cmake_minimum_required(VERSION 3.13)
 
+# @todo: replace all real code with mocks!
 add_executable(
   UTEST_LibMain
   UTEST_LibMain.cpp
   ${CMAKE_SOURCE_DIR}/src/lib/libmain/LibMain.cpp
+  ${CMAKE_SOURCE_DIR}/src/lib/libmain/converters/BMP2BarchConverter0.cpp
+  ${CMAKE_SOURCE_DIR}/src/lib/libmain/converters/BMPAndBarchConverter0Base.cpp
+  ${CMAKE_SOURCE_DIR}/src/lib/libmain/converters/Barch2BMPConverter0.cpp
+  ${CMAKE_SOURCE_DIR}/src/lib/libmain/readers/BMPReader.cpp
+  ${CMAKE_SOURCE_DIR}/src/lib/libmain/readers/BarchReader0.cpp
+  ${CMAKE_SOURCE_DIR}/src/lib/libmain/writers/BarchWriter0.cpp
+  ${CMAKE_SOURCE_DIR}/src/lib/libmain/images/BMPImage.cpp
+  ${CMAKE_SOURCE_DIR}/src/lib/libmain/images/BarchImage.cpp
 )
 
 target_include_directories(

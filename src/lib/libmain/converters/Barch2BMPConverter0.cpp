@@ -108,10 +108,6 @@ barchdata Barch2BMPConverter0::huffman_decompress(const barchdata& src,
       }
 
       LOGT("result size " << rt.size());
-
-      if (rt.size() + 1U == width) {
-        break;
-      }
     }
   }
 
@@ -156,7 +152,6 @@ void Barch2BMPConverter0::copy_arbitrary(barchdata& dst, const size_t& width,
     }
     cc = *liter;
     ccount = ucharbits;
-    bytes_inserted++;
   }
 
   unsigned char data = zero;

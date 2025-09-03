@@ -14,18 +14,20 @@ add_executable(
   ${CMAKE_SOURCE_DIR}/src/lib/libmain/images/BarchImage.cpp
 )
 
+#PRIVATE ${GENERAL_MOCKS_ROOT}/log
 target_include_directories(
   CTEST_LibMain
   PRIVATE ${GENERAL_MOCKS_ROOT}/LibraryContext
-  PRIVATE ${GENERAL_MOCKS_ROOT}/log
   PRIVATE ${CMAKE_SOURCE_DIR}
   PRIVATE ${CMAKE_BINARY_DIR}
   PRIVATE ${CMAKE_SOURCE_DIR}/src/lib/facade
 )
 
+#TemplateProjectSimpleLoggerObj
 target_link_libraries(
   CTEST_LibMain
-  GTest::gtest_main GTest::gmock
+  GTest::gtest_main GTest::gmock 
+  TemplateProjectSimpleLoggerObj
 )
 
 include(GoogleTest)

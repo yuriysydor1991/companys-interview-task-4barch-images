@@ -18,6 +18,7 @@ class UTEST_Barch2BMPConverter0 : public Test
   inline static constexpr const unsigned char zero = 0U;
   static constexpr const size_t testsReps = 2U;
   static constexpr const unsigned char two_two_five = 255U;
+  static constexpr const unsigned char white_pixel = two_two_five;
   static constexpr const unsigned char gray_pixel = two_two_five - 1U;
   inline static constexpr const unsigned char ucharbits =
       sizeof(unsigned char) * 8;
@@ -796,5 +797,198 @@ TEST_F(UTEST_Barch2BMPConverter0, 4whites_4_1gray_4blacks_pixels_decode_success)
     } else {
       EXPECT_EQ(c, two_two_five);
     }
+  }
+}
+
+TEST_F(UTEST_Barch2BMPConverter0,
+       18whites_3_blacks_7whites_pixels_decode_success)
+{
+  auto barch = BarchImage::create();
+  EXPECT_NE(barch, nullptr);
+
+  static constexpr const unsigned char cwidth = 28U;
+
+  barch->width(cwidth);
+
+  barchdata mixed;
+  linestable lt(1, true);
+
+  mixed.emplace_back(0B00001111);  // 16 whites //custom started
+  mixed.emplace_back(0B11111111);  // white
+  mixed.emplace_back(0B11111100);  // white // black started
+  mixed.emplace_back(0B00000000);  // black
+  mixed.emplace_back(0B00000011);  // black // custom started
+  mixed.emplace_back(0B00000000);  // black
+  mixed.emplace_back(0B11111111);  // white
+  mixed.emplace_back(0B11111111);  // white
+  mixed.emplace_back(0B11111111);  // white
+  mixed.emplace_back(0B00000000);  // whites
+  mixed.emplace_back(0B00000000);  // whites
+
+  barchdata expected;
+
+  for (auto iter = 0U; iter < 18U; ++iter) {
+    expected.push_back(white_pixel);
+  }
+
+  expected.push_back(0U);
+  expected.push_back(0U);
+  expected.push_back(0U);
+
+  for (auto iter = 0U; iter < 7U; ++iter) {
+    expected.push_back(white_pixel);
+  }
+
+  barch->lines_table(lt);
+  barch->append_line(mixed);
+
+  auto bmp = conv->convert(barch);
+
+  EXPECT_NE(bmp, nullptr);
+
+  auto bmpd = bmp->data();
+
+  EXPECT_EQ(bmpd.size(), cwidth);
+  EXPECT_EQ(bmpd.size(), expected.size());
+
+  size_t bmpter = 0U;
+  for (; bmpter < bmpd.size(); ++bmpter) {
+    auto c = bmpd[bmpter];
+    EXPECT_EQ(c, expected[bmpter]) << "Expected match at " << bmpter;
+  }
+
+  while (bmpter < expected.size()) {
+    EXPECT_EQ(-1, expected[bmpter])
+        << "Absent pixel in converted data at " << (bmpter++);
+  }
+}
+
+TEST_F(UTEST_Barch2BMPConverter0, 825whites_pixels_decode_success)
+{
+  auto barch = BarchImage::create();
+  EXPECT_NE(barch, nullptr);
+
+  static constexpr const unsigned int cwidth = 825U;
+
+  barch->width(cwidth);
+
+  barchdata mixed;
+  linestable lt(1, true);
+
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000011);
+  mixed.emplace_back(0B11111111);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B00000000);
+
+  barchdata expected(cwidth, white_pixel);
+
+  barch->lines_table(lt);
+  barch->append_line(mixed);
+
+  auto bmp = conv->convert(barch);
+
+  EXPECT_NE(bmp, nullptr);
+
+  auto bmpd = bmp->data();
+
+  EXPECT_EQ(bmpd.size(), cwidth);
+  EXPECT_EQ(bmpd.size(), expected.size());
+
+  size_t bmpter = 0U;
+  for (; bmpter < bmpd.size(); ++bmpter) {
+    auto c = bmpd[bmpter];
+    EXPECT_EQ(c, expected[bmpter]) << "Expected match at " << bmpter;
+  }
+
+  while (bmpter < expected.size()) {
+    EXPECT_EQ(-1, expected[bmpter])
+        << "Absent pixel in converted data at " << (bmpter++);
+  }
+}
+
+TEST_F(UTEST_Barch2BMPConverter0,
+       30whites_3blacks_3whites_pixels_decode_success)
+{
+  auto barch = BarchImage::create();
+  EXPECT_NE(barch, nullptr);
+
+  static constexpr const unsigned char cwidth = 36U;
+
+  barch->width(cwidth);
+
+  barchdata mixed;
+  linestable lt(1, true);
+
+  mixed.emplace_back(0B00000001);
+  mixed.emplace_back(0B11111111);
+  mixed.emplace_back(0B11111111);
+  mixed.emplace_back(0B10000000);
+  mixed.emplace_back(0B00000000);
+  mixed.emplace_back(0B01100000);
+  mixed.emplace_back(0B00011111);
+  mixed.emplace_back(0B11111111);
+  mixed.emplace_back(0B11111111);
+  mixed.emplace_back(0B11100000);
+
+  barchdata expected;
+
+  for (auto iter = 0U; iter < 30U; ++iter) {
+    expected.push_back(white_pixel);
+  }
+
+  expected.push_back(0U);
+  expected.push_back(0U);
+  expected.push_back(0U);
+
+  for (auto iter = 0U; iter < 3U; ++iter) {
+    expected.push_back(white_pixel);
+  }
+
+  barch->lines_table(lt);
+  barch->append_line(mixed);
+
+  auto bmp = conv->convert(barch);
+
+  EXPECT_NE(bmp, nullptr);
+
+  auto bmpd = bmp->data();
+
+  EXPECT_EQ(bmpd.size(), cwidth);
+  EXPECT_EQ(bmpd.size(), expected.size());
+
+  size_t bmpter = 0U;
+  for (; bmpter < bmpd.size(); ++bmpter) {
+    auto c = bmpd[bmpter];
+    EXPECT_EQ(c, expected[bmpter]) << "Expected match at " << bmpter;
+  }
+
+  while (bmpter < expected.size()) {
+    EXPECT_EQ(-1, expected[bmpter])
+        << "Absent pixel in converted data at " << (bmpter++);
   }
 }
