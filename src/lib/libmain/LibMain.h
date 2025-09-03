@@ -24,7 +24,7 @@ class LibMain : virtual public barchclib0::ILib
   using IReaderPtr = barchclib0::readers::IReaderPtr;
 
   virtual ~LibMain() = default;
-  LibMain();
+  LibMain() = default;
 
   /// @brief Converts the given BMP file IBarchImage instance into the barch
   virtual IBarchImagePtr bmp_to_barch(IBarchImagePtr bmp) override;

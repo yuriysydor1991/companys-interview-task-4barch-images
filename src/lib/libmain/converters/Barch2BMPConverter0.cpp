@@ -51,8 +51,6 @@ BMPImagePtr Barch2BMPConverter0::convert(BarchImagePtr barch)
   bmp->width(barch->width());
   bmp->bits_per_pixel(barch->bits_per_pixel());
 
-  const auto& dstdata = bmp->data();
-
   for (size_t liter = 0U; liter < barch->height() && liter < linestable.size();
        ++liter) {
     auto scanline = barch->line(liter);

@@ -7,3 +7,5 @@ endif()
 set(LIBMAIN_MOCK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/mocks)
 
 add_subdirectory(unit)
+add_subdirectory(component)
+
