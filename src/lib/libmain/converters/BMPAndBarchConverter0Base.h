@@ -24,6 +24,7 @@ class BMPAndBarchConverter0Base
 
  protected:
   inline static constexpr const unsigned char zero = 0U;
+  inline static constexpr const unsigned char one = 1U;
   inline static constexpr const unsigned char two_five_five = 255U;
   inline static constexpr const unsigned char leftbit = 1 << 7;
   inline static constexpr const unsigned char ucharbits =

@@ -21,10 +21,34 @@ class CTEST_BMPReader : public Test
       barchclib0::readers::REAL_IMAGES_ROOT;
   inline static std::filesystem::path i1 = iroot / "test-image-1-gs.bmp";
   inline static std::filesystem::path i2 = iroot / "test-image-2-gs.bmp";
+  inline static constexpr const size_t i1w = 825;
+  inline static constexpr const size_t i1h = 1200;
+
+  inline static constexpr const size_t i2w = 825;
+  inline static constexpr const size_t i2h = 1200;
 
   CTEST_BMPReader() : reader{BMPReader::create()}
   {
     EXPECT_NE(reader, nullptr);
+  }
+
+  void trace_bmp(const std::string& name, BMPImagePtr bmp)
+  {
+    std::fstream out(name, std::fstream::trunc | std::fstream::out);
+    EXPECT_TRUE(out.is_open());
+
+    unsigned int line = 0;
+    for (unsigned int iter = 0U; iter < bmp->data().size(); ++iter) {
+      out << std::hex << "0x" << static_cast<unsigned int>(bmp->data()[iter])
+          << ", ";
+
+      if (line++ >= 10) {
+        out << std::endl;
+        line = 0U;
+      }
+    }
+
+    out << std::endl;
   }
 
   BMPReaderPtr reader;
@@ -56,28 +80,16 @@ TEST_F(CTEST_BMPReader, read_real_file_success)
 
   EXPECT_NE(bmp, nullptr);
 
-  EXPECT_GE(bmp->width(), 0);
-  EXPECT_GE(bmp->height(), 0);
+  EXPECT_EQ(bmp->width(), i1w);
+  EXPECT_EQ(bmp->height(), i1h);
 
   const auto& expectedData =
       barchclib0::ctests::BMPReaderDataProvider::get_i1_data();
   const auto& obtainedData = bmp->data();
 
-  //  std::fstream out("out.cpp", std::fstream::trunc | std::fstream::out);
-  //  EXPECT_TRUE(out.is_open());
-  //
-  //  unsigned int line = 0;
-  //  for (unsigned int iter = 0U; iter < bmp->data().size(); ++iter) {
-  //    out << std::hex << "0x" << static_cast<unsigned int>(bmp->data()[iter])
-  //        << ", ";
-  //
-  //    if (line++ >= 10) {
-  //      out << std::endl;
-  //      line = 0U;
-  //    }
-  //  }
-  //
-  //  out << std::endl;
+  EXPECT_EQ(expectedData.size(), i1w * i1h);
+
+  // trace_bmp("i1.cpp", bmp);
 
   EXPECT_EQ(expectedData.size(), obtainedData.size());
 
@@ -92,14 +104,17 @@ TEST_F(CTEST_BMPReader, read_real_2_file_success)
 
   EXPECT_NE(bmp, nullptr);
 
-  EXPECT_GE(bmp->width(), 0);
-  EXPECT_GE(bmp->height(), 0);
+  EXPECT_EQ(bmp->width(), i2w);
+  EXPECT_EQ(bmp->height(), i2h);
 
   const auto& expectedData =
       barchclib0::ctests::BMPReaderDataProvider::get_i2_data();
   const auto& obtainedData = bmp->data();
 
+  EXPECT_EQ(expectedData.size(), i2w * i2h);
   EXPECT_EQ(expectedData.size(), obtainedData.size());
+
+  // trace_bmp("i2.cpp", bmp);
 
   for (size_t iter = 0U; iter < obtainedData.size(); ++iter) {
     EXPECT_EQ(expectedData[iter], obtainedData[iter]);

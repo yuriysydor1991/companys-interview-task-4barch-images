@@ -127,18 +127,12 @@ TEST_F(CTEST_LibMain, restore_bmp_1_success)
 
   EXPECT_EQ(failures, 0U) << "Expecting no failures";
 
-  for (size_t liter = 0U; liter < bmp1->height(); ++liter) {
+  size_t liter = 0U;
+  for (; liter < bmp1->height(); ++liter) {
     auto origl = bmp1->line(liter);
     auto restoredl = restored->line(liter);
 
     EXPECT_EQ(origl.size(), restoredl.size());
-
-    //    for (size_t biter = 0U; biter < origl.size() && biter <
-    //    restoredl.size();
-    //         ++biter) {
-    //      std::cout << "EXPECTED D: " << static_cast<unsigned
-    //      int>(origl[biter]) << std::endl;
-    //    }
 
     bool fail = false;
     for (size_t biter = 0U; biter < origl.size() && biter < restoredl.size();
@@ -149,6 +143,28 @@ TEST_F(CTEST_LibMain, restore_bmp_1_success)
       if (origl[biter] != restoredl[biter]) {
         fail = true;
       }
+    }
+
+    if (fail) {
+      auto bline = barch1->line(liter);
+
+      for (unsigned int lbiter = 0U; lbiter < bline.size(); ++lbiter) {
+        std::cout << "barch line[" << lbiter << "] -> "
+                  << std::bitset<8>(bline[lbiter]) << std::endl;
+      }
+    }
+  }
+
+  for (; liter < restored->height(); ++liter) {
+    auto origl = bmp1->line(liter);
+    auto restoredl = restored->line(liter);
+
+    EXPECT_EQ(origl.size(), restoredl.size());
+
+    bool fail = true;
+    for (size_t biter = 0U; biter < restoredl.size(); ++biter) {
+      EXPECT_EQ(-1, restoredl[biter])
+          << "Expect " << liter << " lines bytes to match at " << biter;
     }
 
     if (fail) {

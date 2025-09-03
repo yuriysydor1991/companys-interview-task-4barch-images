@@ -87,6 +87,16 @@ BMPImagePtr BMPReader::read_data(const fs::path& imagePath)
     return nullptr;
   }
 
+  if (infoHeader.biBitCount != 8) {
+    LOGE("No 8 bit images are supported");
+    return nullptr;
+  }
+
+  auto image = BMPImage::create();
+
+  image->width(static_cast<size_t>(width));
+  image->height(static_cast<size_t>(height));
+
   LOGT("Declared image size: " << width << "x" << height);
   LOGT("Bits per pixel " << infoHeader.biBitCount);
 
@@ -99,34 +109,45 @@ BMPImagePtr BMPReader::read_data(const fs::path& imagePath)
 
   LOGT("Row size: " << rowSize << " bytes");
 
+  const size_t expectedNumSize = width * height;
   const std::streamsize expectedSize = rowSize * std::abs(infoHeader.biHeight);
 
-  LOGT("Expected size: " << expectedSize << " bytes");
+  LOGT("Expected size: " << expectedNumSize << " bytes");
 
-  barchdata fdata(static_cast<barchdata::size_type>(expectedSize),
-                  static_cast<barchdata::value_type>(0));
+  barchdata fdata;
 
-  fimage.read(reinterpret_cast<char*>(fdata.data()), expectedSize);
+  fdata.reserve(expectedNumSize);
 
-  const std::streamsize readSize = fimage.gcount();
+  const size_t paddingCount = rowSize - static_cast<size_t>(width);
+  std::streamsize readSize{0};
+
+  LOGT("Padding " << paddingCount << " bytes");
+
+  for (size_t crow = 0U; crow < static_cast<size_t>(height); crow++) {
+    barchdata buff(rowSize, static_cast<unsigned char>(0));
+
+    fimage.read(reinterpret_cast<char*>(buff.data()), rowSize);
+
+    readSize += fimage.gcount();
+
+    buff.resize(width);
+
+    fdata.insert(fdata.end(), buff.begin(), buff.end());
+  }
 
   fimage.close();
 
-  if (readSize != expectedSize) {
-    LOGE("Expected to fetch " << expectedSize << " bytes but got " << readSize
-                              << " bytes instead");
+  if (fdata.size() != expectedNumSize) {
+    LOGE("Expected to fetch " << expectedNumSize << " bytes but got "
+                              << fdata.size() << " bytes instead");
     return nullptr;
   }
 
-  auto image = BMPImage::create();
-
   assert(image != nullptr);
 
-  LOGT("Filling image with " << width << "x" << height << " (" << readSize
+  LOGT("Filling image with " << width << "x" << height << " (" << fdata.size()
                              << " bytes) of data");
 
-  image->width(static_cast<size_t>(width));
-  image->height(static_cast<size_t>(height));
   image->data(std::move(fdata));
   image->bits_per_pixel(infoHeader.biBitCount);
 
