@@ -23,6 +23,10 @@ class BMPAndBarchConverter0Base
   virtual const unsigned int& get_supported_bits();
 
  protected:
+  int get_next_pack_type(barchdata::const_iterator& liter,
+                         barchdata::const_iterator lend, unsigned char& cc,
+                         unsigned char& ccount);
+
   inline static constexpr const unsigned char zero = 0U;
   inline static constexpr const unsigned char one = 1U;
   inline static constexpr const unsigned char two_five_five = 255U;

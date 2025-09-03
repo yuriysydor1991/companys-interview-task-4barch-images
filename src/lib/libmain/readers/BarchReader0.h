@@ -54,6 +54,10 @@ class BarchReader0 : public std::enable_shared_from_this<BarchReader0>,
 
   inline static constexpr const unsigned char leftmostone = 0B10000000;
   inline static const std::string BARCH0_STARTER_STR = BARCH0_STARTER;
+
+  unsigned char get_compress_type(barchdata::iterator& liter,
+                                  barchdata::iterator& lend, unsigned char& cc,
+                                  unsigned char& ccount);
 };
 
 using BarchReader0Ptr = BarchReader0::BarchReader0Ptr;

@@ -49,10 +49,9 @@ class BMP2BarchConverter0
   barchdata get_encoded(barchdata::const_iterator begin,
                         barchdata::const_iterator end, unsigned char& dst,
                         unsigned char& dst_left);
-  static barchdata get_encoded_as_is(barchdata::const_iterator begin,
-                                     barchdata::const_iterator end,
-                                     unsigned char& dst,
-                                     unsigned char& dst_left);
+  barchdata get_encoded_as_is(barchdata::const_iterator begin,
+                              barchdata::const_iterator end, unsigned char& dst,
+                              unsigned char& dst_left);
   static barchdata get_encoded_blacks(unsigned char& dst,
                                       unsigned char& dst_left);
   static barchdata get_encoded_whites(unsigned char& dst,

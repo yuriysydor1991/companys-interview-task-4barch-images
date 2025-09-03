@@ -21,8 +21,17 @@ class CTEST_LibMain : public Test
   inline static std::filesystem::path i1 = images_root / "test-image-1-gs.bmp";
   inline static std::filesystem::path i2 = images_root / "test-image-2-gs.bmp";
 
+  inline static const std::filesystem::path testbarchdir =
+      std::filesystem::path{ct_libmain::TEST_DATA_ROOT} / "CTEST_LibMain";
+  inline static const std::filesystem::path testbarch =
+      testbarchdir / "test.barch";
+
   CTEST_LibMain() : controller{LibMain::create()}
   {
+    if (!std::filesystem::is_directory(testbarchdir)) {
+      EXPECT_TRUE(std::filesystem::create_directories(testbarchdir));
+    }
+
     EXPECT_NE(controller, nullptr);
   }
 
@@ -69,7 +78,7 @@ TEST_F(CTEST_LibMain, convert_bmp_1_success)
   EXPECT_EQ(barch1->height(), 1200U);
   EXPECT_EQ(barch1->bits_per_pixel(), 8U);
   EXPECT_FALSE(barch1->data().empty());
-  EXPECT_EQ(barch1->data().size(), 161111);
+  EXPECT_EQ(barch1->data().size(), 161809);
 }
 
 TEST_F(CTEST_LibMain, convert_bmp_2_success)
@@ -86,7 +95,7 @@ TEST_F(CTEST_LibMain, convert_bmp_2_success)
   EXPECT_EQ(barch2->height(), 1200U);
   EXPECT_EQ(barch2->bits_per_pixel(), 8U);
   EXPECT_FALSE(barch2->data().empty());
-  EXPECT_EQ(barch2->data().size(), 394358);
+  EXPECT_EQ(barch2->data().size(), 394691);
 }
 
 TEST_F(CTEST_LibMain, restore_bmp_1_success)
@@ -211,6 +220,87 @@ TEST_F(CTEST_LibMain, restore_bmp_2_success)
 
       for (unsigned int lbiter = 0U; lbiter < bline.size(); ++lbiter) {
         std::cout << "barch line[" << lbiter << "] -> "
+                  << std::bitset<8>(bline[lbiter]) << std::endl;
+      }
+    }
+  }
+}
+
+TEST_F(CTEST_LibMain, restore_bmp_1_from_file_success)
+{
+  IBarchImagePtr bmp1 = controller->read(i1);
+
+  EXPECT_NE(bmp1, nullptr);
+
+  IBarchImagePtr barchConv = controller->bmp_to_barch(bmp1);
+
+  EXPECT_NE(barchConv, nullptr);
+
+  barchConv->filepath(testbarch);
+
+  EXPECT_TRUE(controller->write(barchConv));
+
+  IBarchImagePtr barchI = controller->read(testbarch);
+
+  EXPECT_NE(barchI, nullptr);
+
+  BarchImagePtr barch1 = std::dynamic_pointer_cast<BarchImage>(barchI);
+
+  EXPECT_NE(barch1, nullptr);
+
+  EXPECT_EQ(barchConv->width(), barch1->width());
+  EXPECT_EQ(barchConv->height(), barch1->height());
+  EXPECT_EQ(barchConv->bits_per_pixel(), barch1->bits_per_pixel());
+  EXPECT_EQ(barchConv->data().size(), barch1->data().size());
+
+  const auto& origD = barchConv->data();
+  const auto& restoredD = barch1->data();
+
+  EXPECT_EQ(origD.size(), restoredD.size());
+
+  size_t failures{0U};
+
+  for (size_t biter = 0U; biter < origD.size(); ++biter) {
+    // EXPECT_EQ(origD[biter], restoredD[biter]) << "Expect bytes to match at "
+    // << biter;
+
+    if (origD[biter] != restoredD[biter]) {
+      failures++;
+    }
+  }
+
+  EXPECT_EQ(failures, 0U) << "Expecting no failures";
+
+  size_t liter = 0U;
+  for (; liter < barchConv->height(); ++liter) {
+    auto origl = barchConv->line(liter);
+    auto restoredl = barch1->line(liter);
+
+    EXPECT_EQ(origl.size(), restoredl.size());
+
+    bool fail = false;
+    for (size_t biter = 0U; biter < origl.size() && biter < restoredl.size();
+         ++biter) {
+      EXPECT_EQ(origl[biter], restoredl[biter])
+          << "Expect " << liter << " lines bytes to match at " << biter;
+
+      if (origl[biter] != restoredl[biter]) {
+        fail = true;
+      }
+    }
+
+    if (fail) {
+      auto bline = barchConv->line(liter);
+
+      for (unsigned int lbiter = 0U; lbiter < bline.size(); ++lbiter) {
+        std::cout << "    orig barch line[" << lbiter << "] -> "
+                  << std::bitset<8>(bline[lbiter]) << std::endl;
+      }
+
+      bline = barch1->line(liter);
+
+      for (unsigned int lbiter = 0U; lbiter < bline.size(); ++lbiter) {
+        std::cout << "restored barch line[" << lbiter << "] -> "
                   << std::bitset<8>(bline[lbiter]) << std::endl;
       }
     }

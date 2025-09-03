@@ -531,3 +531,41 @@ TEST_F(CTEST_BarchReader0,
     EXPECT_EQ(barch->line(1)[iter], gray_pixel);
   }
 }
+
+TEST_F(CTEST_BarchReader0, read_825whites_compressed_two_line_success)
+{
+  static constexpr const size_t cwidth = 825;
+  static constexpr const size_t cheight = 2;
+  static constexpr const size_t expectedLength = 28U * 2U;
+
+  barchdata compressed(24U, 0);
+  compressed.emplace_back(0B00000011);
+  compressed.emplace_back(0B11111111);
+  compressed.emplace_back(0B00000000);
+  compressed.emplace_back(0B00000000);
+
+  barchdata expectedData(compressed);
+
+  expectedData.insert(expectedData.end(), compressed.begin(), compressed.end());
+
+  EXPECT_EQ(expectedData.size(), expectedLength);
+
+  EXPECT_TRUE(write_file(cwidth, cheight, {true, true}, expectedData));
+
+  auto barch = reader->read(testbarch);
+
+  EXPECT_NE(barch, nullptr);
+
+  EXPECT_EQ(barch->width(), cwidth);
+  EXPECT_EQ(barch->height(), cheight);
+  EXPECT_EQ(barch->lines_table().size(), cheight);
+  EXPECT_TRUE(barch->lines_table()[0U]);
+  EXPECT_TRUE(barch->lines_table()[1U]);
+
+  const auto data = barch->data();
+  EXPECT_EQ(data.size(), expectedData.size());
+
+  for (size_t liter = 0U; liter < data.size(); ++liter) {
+    EXPECT_EQ(data[liter], expectedData[liter]);
+  }
+}

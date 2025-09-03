@@ -134,7 +134,7 @@ bool BarchWriter0::write(BarchImagePtr image, std::ofstream& dst)
 
   linesdata.clear();
 
-  linesdata = image->data();
+  linesdata = idata;
 
   if (!put_data(linesdata, dst)) {
     LOGE("Fail to put the data into the file");

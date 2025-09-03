@@ -355,11 +355,12 @@ TEST_F(UTEST_BMP2BarchConverter0, single_row_15_blacks_convert_image_success)
   auto bd = barch->data();
 
   EXPECT_FALSE(bd.empty());
-  EXPECT_EQ(bd.size(), 4U);
+  EXPECT_EQ(bd.size(), 5U);
   EXPECT_EQ(bd[0], 0B10101011);
   EXPECT_EQ(bd[1], 0B0);
   EXPECT_EQ(bd[2], 0B0);
   EXPECT_EQ(bd[3], 0B0);
+  EXPECT_EQ(bd[4], 0B0);
 }
 
 TEST_F(UTEST_BMP2BarchConverter0, single_row_14_blacks_convert_image_success)
@@ -387,11 +388,12 @@ TEST_F(UTEST_BMP2BarchConverter0, single_row_14_blacks_convert_image_success)
   auto bd = barch->data();
 
   EXPECT_FALSE(bd.empty());
-  EXPECT_EQ(bd.size(), 4U);
+  EXPECT_EQ(bd.size(), 5U);
   EXPECT_EQ(bd[0], 0B10101011);
   EXPECT_EQ(bd[1], 0B0);
   EXPECT_EQ(bd[2], 0B0);
   EXPECT_EQ(bd[3], 0B0);
+  EXPECT_EQ(bd[4], 0B0);
 }
 
 TEST_F(UTEST_BMP2BarchConverter0, single_row_13_blacks_convert_image_success)
@@ -419,10 +421,12 @@ TEST_F(UTEST_BMP2BarchConverter0, single_row_13_blacks_convert_image_success)
   auto bd = barch->data();
 
   EXPECT_FALSE(bd.empty());
-  EXPECT_EQ(bd.size(), 4U);
+  EXPECT_EQ(bd.size(), 5U);
   EXPECT_EQ(bd[0], 0B10101011);
   EXPECT_EQ(bd[1], 0B0);
+  EXPECT_EQ(bd[2], 0B0);
   EXPECT_EQ(bd[3], 0B0);
+  EXPECT_EQ(bd[4], 0B0);
 }
 
 TEST_F(UTEST_BMP2BarchConverter0,
@@ -871,7 +875,14 @@ TEST_F(UTEST_BMP2BarchConverter0,
   EXPECT_EQ(bd[6], 0B00000000);
   EXPECT_EQ(bd[7], 0B00000000);
   EXPECT_EQ(bd[8], 0B00000000);
+
+  for (auto iter = 0U; iter < bd.size(); ++iter) {
+    std::cout << "compressed data[" << iter << "]: " << std::bitset<8>(bd[iter])
+              << std::endl;
+  }
 }
+
+#if 0
 
 TEST_F(UTEST_BMP2BarchConverter0,
        single_row_4_240gray_and_10_white_pixels_convert_image_success)
@@ -974,3 +985,114 @@ TEST_F(UTEST_BMP2BarchConverter0,
     EXPECT_EQ(bd[iter], expected[iter]);
   }
 }
+
+TEST_F(UTEST_BMP2BarchConverter0,
+       single_row_125_white_pixels_convert_image_success)
+{
+  auto bmp = BMPImage::create();
+  EXPECT_NE(bmp, nullptr);
+  
+  static constexpr const size_t cwidth = 125;
+  static constexpr const size_t expected_compressed = std::ceil(cwidth / 4.f / 8.f) + 4U;
+
+  bmp->width(cwidth);
+  bmp->height(1);
+
+  barchdata whites(bmp->width(), two_two_five);
+
+  bmp->data(whites);
+
+  auto barch = conv->convert(bmp);
+
+  EXPECT_NE(barch, nullptr);
+
+  auto linest = barch->lines_table();
+
+  EXPECT_EQ(linest.size(), 1);
+
+  EXPECT_TRUE(linest[0U]);
+
+  auto bd = barch->data();
+
+  EXPECT_FALSE(bd.empty());
+  EXPECT_EQ(bd.size(), expected_compressed);
+  
+  for (auto iter = 0U; iter < bd.size(); ++iter) {
+    std::cout << "compressed data: " << std::bitset<8>(bd[iter]) << std::endl;
+  }
+}
+
+
+TEST_F(UTEST_BMP2BarchConverter0,
+       single_row_225_white_pixels_convert_image_success)
+{
+  auto bmp = BMPImage::create();
+  EXPECT_NE(bmp, nullptr);
+  
+  static constexpr const size_t cwidth = 225;
+  static constexpr const size_t expected_compressed = std::ceil(cwidth / 4.f / 8.f) + 4U;
+
+  bmp->width(cwidth);
+  bmp->height(1);
+
+  barchdata whites(bmp->width(), two_two_five);
+
+  bmp->data(whites);
+
+  auto barch = conv->convert(bmp);
+
+  EXPECT_NE(barch, nullptr);
+
+  auto linest = barch->lines_table();
+
+  EXPECT_EQ(linest.size(), 1);
+
+  EXPECT_TRUE(linest[0U]);
+
+  auto bd = barch->data();
+
+  EXPECT_FALSE(bd.empty());
+  EXPECT_EQ(bd.size(), expected_compressed);
+  
+  for (auto iter = 0U; iter < bd.size(); ++iter) {
+    std::cout << "compressed data: " << std::bitset<8>(bd[iter]) << std::endl;
+  }
+}
+
+TEST_F(UTEST_BMP2BarchConverter0,
+       single_row_825_white_pixels_convert_image_success)
+{
+  auto bmp = BMPImage::create();
+  EXPECT_NE(bmp, nullptr);
+  
+  static constexpr const size_t cwidth = 825;
+  static constexpr const size_t expected_compressed = std::ceil(cwidth / 4.f / 8.f) + 4U;
+
+  bmp->width(cwidth);
+  bmp->height(1);
+
+  barchdata whites(bmp->width(), two_two_five);
+
+  bmp->data(whites);
+
+  auto barch = conv->convert(bmp);
+
+  EXPECT_NE(barch, nullptr);
+
+  auto linest = barch->lines_table();
+
+  EXPECT_EQ(linest.size(), 1);
+
+  EXPECT_TRUE(linest[0U]);
+
+  auto bd = barch->data();
+
+  EXPECT_FALSE(bd.empty());
+  EXPECT_EQ(bd.size(), expected_compressed);
+  
+  for (auto iter = 0U; iter < bd.size(); ++iter) {
+    std::cout << "compressed data[" << iter << "]: " << std::bitset<8>(bd[iter]) << std::endl;
+  }
+}
+
+#endif

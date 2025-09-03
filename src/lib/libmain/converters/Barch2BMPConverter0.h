@@ -41,9 +41,6 @@ class Barch2BMPConverter0
   void insert_white_pixel(barchdata& dst);
   void insert_black_pixel(barchdata& dst);
   void insert_pixel(barchdata& dst, const int& color);
-  unsigned char get_next_pack_type(barchdata::const_iterator& liter,
-                                   barchdata::const_iterator lend,
-                                   unsigned char& cc, unsigned char& ccount);
 };
 
 using Barch2BMPConverter0Ptr = Barch2BMPConverter0::Barch2BMPConverter0Ptr;

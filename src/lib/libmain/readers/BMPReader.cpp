@@ -38,6 +38,10 @@ BMPImagePtr BMPReader::read(const fs::path& imagePath)
       return nullptr;
     }
 
+    if (!is_bmp(imagePath)) {
+      LOGW("Ignoring given path does not contain valid ext: " << imagePath);
+    }
+
     if (!fs::is_regular_file(imagePath)) {
       LOGE("No valid image file: " << imagePath);
       return nullptr;

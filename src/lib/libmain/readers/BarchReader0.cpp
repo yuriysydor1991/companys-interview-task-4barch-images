@@ -44,6 +44,10 @@ BarchImagePtr BarchReader0::read(const fs::path& imagePath)
       return nullptr;
     }
 
+    if (!is_barch(imagePath)) {
+      LOGW("Ignoring given path does not contain valid ext: " << imagePath);
+    }
+
     if (!fs::is_regular_file(imagePath)) {
       LOGE("No valid image file: " << imagePath);
       return nullptr;
@@ -205,9 +209,9 @@ bool BarchReader0::extract_compressed_line(BarchImagePtr barch,
                                                      << " max width");
 
   size_t line_size{zero};
-  auto biter = idata.begin();
+  auto biter = idata.cbegin();
 
-  while (biter < idata.end() && line_size < barch->width()) {
+  while (biter < idata.cend() && line_size < barch->width()) {
     unsigned char cc = *biter;
     unsigned char ccleft = ucharbits;
 
@@ -215,42 +219,55 @@ bool BarchReader0::extract_compressed_line(BarchImagePtr barch,
                              << line_size);
 
     while (ccleft > 0 && line_size < barch->width() && biter < idata.end()) {
-      if (cc & leftbit) {
-        if ((static_cast<unsigned char>(cc << 1) & leftbit) == leftbit) {
-          LOGT("Located grays " << get_batch_pixels_compress()
-                                << " bytes encoded");
-          // 4 grays
-          line_size += get_batch_pixels_compress();
-          // skip all other bits
-          unsigned int skips{0U};
-          while (skips++ < get_batch_pixels_compress() && biter < idata.end()) {
-            biter++;
-          }
-          cc = *biter;
-          cc <<= ucharbits - ccleft;
-        } else {
-          // 4 blacks
-          LOGT("Located " << get_batch_pixels_compress()
-                          << " black bytes encoded");
-          line_size += get_batch_pixels_compress();
-          cc <<= coded_blacks_bits;
-          ccleft -= coded_blacks_bits;
-        }
-      } else {
+      const int ictype = get_next_pack_type(biter, idata.cend(), cc, ccleft);
+
+      if (ictype < 0) {
+        LOGT("End of data reached");
+        break;
+      }
+
+      const unsigned char ctype = static_cast<unsigned char>(ictype);
+
+      if (ctype == coded_whites) {
         // 4 whites
         LOGT("Located " << get_batch_pixels_compress()
                         << " white bytes encoded");
         line_size += get_batch_pixels_compress();
-        cc <<= coded_whites_bits;
-        ccleft -= coded_whites_bits;
+      } else if (ctype == coded_blacks) {
+        // 4 blacks
+        LOGT("Located " << get_batch_pixels_compress()
+                        << " black bytes encoded");
+        line_size += get_batch_pixels_compress();
+      } else if (ctype == coded_as_is) {
+        LOGT("Located grays " << get_batch_pixels_compress()
+                              << " bytes encoded");
+        // 4 grays
+        line_size += get_batch_pixels_compress();
+        // skip all other bits
+        unsigned int skips{0U};
+        while (skips++ < get_batch_pixels_compress() && biter < idata.end()) {
+          biter++;
+        }
+        if (biter >= idata.end()) {
+          break;
+        }
+        cc = *biter;
+        cc <<= ucharbits - ccleft;
+      } else {
+        LOGE("Unknown compression type: " << static_cast<unsigned int>(ctype));
+        return false;
       }
     }
 
     ++biter;
   }
 
-  barchdata line(idata.begin(), biter);
-  idata.erase(idata.begin(), biter);
+  if (biter >= idata.end()) {
+    biter = idata.end();
+  }
+
+  barchdata line(idata.cbegin(), biter);
+  idata.erase(idata.cbegin(), biter);
 
   barch->height(barch->height() - 1U);
   barch->append_line(line);

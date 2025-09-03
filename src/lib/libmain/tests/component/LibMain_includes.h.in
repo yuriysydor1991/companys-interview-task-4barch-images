@@ -5,6 +5,7 @@ namespace ct_libmain
 {
 
 constexpr const char* const REAL_IMAGES_ROOT = "@CMAKE_SOURCE_DIR@/misc/images";
+constexpr const char* const TEST_DATA_ROOT = "@CMAKE_CURRENT_BINARY_DIR@";
 
 } // libmainct
 

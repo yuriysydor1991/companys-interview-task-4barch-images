@@ -136,7 +136,7 @@ bool LibMain::write(IBarchImagePtr barch)
     return false;
   }
 
-  return false;
+  return true;
 }
 
 LibMain::ILibPtr LibMain::duplicate() { return create(); }

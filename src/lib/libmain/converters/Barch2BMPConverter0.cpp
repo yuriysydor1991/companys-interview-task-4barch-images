@@ -93,8 +93,14 @@ barchdata Barch2BMPConverter0::huffman_decompress(const barchdata& src,
     while (ccount > 0 && rt.size() < width && liter < src.cend()) {
       LOGT("checking " << std::bitset<ucharbits>(cc) << ") with left "
                        << static_cast<unsigned int>(ccount));
-      const unsigned char type =
-          get_next_pack_type(liter, src.end(), cc, ccount);
+      const int itype = get_next_pack_type(liter, src.end(), cc, ccount);
+
+      if (itype < 0) {
+        LOGT("End of data reached");
+        return rt;
+      }
+
+      const unsigned char type = static_cast<unsigned char>(itype);
 
       if (type == coded_whites) {
         fill_whites(rt, width);
@@ -109,57 +115,6 @@ barchdata Barch2BMPConverter0::huffman_decompress(const barchdata& src,
   }
 
   return rt;
-}
-
-unsigned char Barch2BMPConverter0::get_next_pack_type(
-    barchdata::const_iterator& liter, barchdata::const_iterator lend,
-    unsigned char& cc, unsigned char& ccount)
-{
-  if (ccount == zero) {
-    liter++;
-    if (liter >= lend) {
-      LOGE("No data left");
-      return zero;
-    }
-
-    cc = *liter;
-    ccount = ucharbits;
-  }
-
-  if ((cc & leftbit) == zero) {
-    cc <<= coded_whites_bits;
-    ccount -= coded_whites_bits;
-    return coded_whites;
-  }
-
-  cc <<= one;
-  ccount -= one;
-
-  if (ccount == 0) {
-    LOGT("Returning coded whites");
-    liter++;
-    if (liter >= lend) {
-      LOGE("No data left");
-      return 0;
-    }
-
-    cc = *liter;
-    ccount = ucharbits;
-  }
-
-  const bool secondcheck = (cc & leftbit) == zero;
-
-  cc <<= one;
-  ccount -= one;
-
-  if (secondcheck) {
-    LOGT("Returning coded blacks");
-    return coded_blacks;
-  }
-
-  LOGT("Returning coded as is");
-
-  return coded_as_is;
 }
 
 void Barch2BMPConverter0::fill_whites(barchdata& dst, const size_t& width)

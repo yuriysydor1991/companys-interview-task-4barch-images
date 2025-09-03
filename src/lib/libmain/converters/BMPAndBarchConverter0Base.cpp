@@ -82,4 +82,55 @@ void BMPAndBarchConverter0Base::pack_left_bits(unsigned char& dst,
                   << static_cast<unsigned int>(data_left));
 }
 
+int BMPAndBarchConverter0Base::get_next_pack_type(
+    barchdata::const_iterator& liter, barchdata::const_iterator lend,
+    unsigned char& cc, unsigned char& ccount)
+{
+  if (ccount == zero) {
+    liter++;
+    if (liter >= lend) {
+      LOGE("No data left");
+      return -1;
+    }
+
+    cc = *liter;
+    ccount = ucharbits;
+  }
+
+  if ((cc & leftbit) == zero) {
+    cc <<= coded_whites_bits;
+    ccount -= coded_whites_bits;
+    return coded_whites;
+  }
+
+  cc <<= one;
+  ccount -= one;
+
+  if (ccount == zero) {
+    LOGT("Returning coded whites");
+    liter++;
+    if (liter >= lend) {
+      LOGE("No data left");
+      return -1;
+    }
+
+    cc = *liter;
+    ccount = ucharbits;
+  }
+
+  const bool secondcheck = (cc & leftbit) == zero;
+
+  cc <<= one;
+  ccount -= one;
+
+  if (secondcheck) {
+    LOGT("Returning coded blacks");
+    return coded_blacks;
+  }
+
+  LOGT("Returning coded as is");
+
+  return coded_as_is;
+}
+
 }  // namespace barchclib0::converters

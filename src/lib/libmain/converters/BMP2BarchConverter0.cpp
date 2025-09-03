@@ -231,21 +231,7 @@ barchdata BMP2BarchConverter0::get_encoded(barchdata::const_iterator begin,
   if (std::distance(begin, end) < get_batch_pixels_compress()) {
     LOGT("Compressing as is for unsuficient data "
          << std::distance(begin, end));
-    auto rt = get_encoded_as_is(begin, end, dst, dst_left);
-    if (dst_left > zero && dst_left < ucharbits) {
-      dst <<= dst_left;
-      LOGT("Packing last byte " << std::bitset<ucharbits>(dst) << " with "
-                                << static_cast<unsigned int>(dst_left)
-                                << " trailing bits");
-      rt.push_back(dst);
-      dst = zero;
-      dst_left = zero;
-    }
-    while (rt.size() != get_batch_pixels_compress()) {
-      LOGT("Packing trailing zero byte");
-      rt.push_back(zero);
-    }
-    return rt;
+    return get_encoded_as_is(begin, end, dst, dst_left);
   } else if (all_whites(begin, end)) {
     return get_encoded_whites(dst, dst_left);
   } else if (all_blacks(begin, end)) {
@@ -262,6 +248,8 @@ barchdata BMP2BarchConverter0::get_encoded_as_is(
     unsigned char& dst, unsigned char& dst_left)
 {
   LOGT("Coding as is");
+
+  static const unsigned char bitsRequired = get_batch_pixels_compress() * 8U;
 
   barchdata rt;
 
@@ -280,6 +268,7 @@ barchdata BMP2BarchConverter0::get_encoded_as_is(
 
   data = *begin;
   data_left = ucharbits;
+  unsigned char bitspacked = zero;
 
   while (begin < end) {
     pack_left_bits(dst, dst_left, data, data_left);
@@ -288,6 +277,7 @@ barchdata BMP2BarchConverter0::get_encoded_as_is(
       data_left = ucharbits;
       begin++;
       data = *begin;
+      bitspacked += ucharbits;
     }
 
     if (dst_left == zero) {
@@ -295,6 +285,26 @@ barchdata BMP2BarchConverter0::get_encoded_as_is(
       dst = zero;
       dst_left = ucharbits;
     }
+
+    LOGT("already packed bits: " << static_cast<unsigned>(bitspacked));
+  }
+
+  if (dst_left > zero && dst_left < ucharbits && bitspacked < bitsRequired) {
+    dst <<= dst_left;
+    LOGT("Packing last byte " << std::bitset<ucharbits>(dst) << " with "
+                              << static_cast<unsigned int>(dst_left)
+                              << " trailing bits");
+    rt.push_back(dst);
+    dst = zero;
+    dst_left = ucharbits;
+  }
+
+  while (bitspacked < bitsRequired) {
+    LOGT("Packing trailing zero byte");
+    rt.push_back(zero);
+    bitspacked += ucharbits;
+    dst = zero;
+    dst_left = ucharbits;
   }
 
   return rt;
