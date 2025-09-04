@@ -22,6 +22,8 @@ struct ApplicationContext
   std::vector<std::string> errors;
 
   MOCK_METHOD(void, push_error, (const std::string& errorDescription));
+
+  std::string startdir;
 };
 
 }  // namespace app

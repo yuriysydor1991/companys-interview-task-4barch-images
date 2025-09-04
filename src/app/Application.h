@@ -32,6 +32,8 @@ class Application : public IApplication
 
  protected:
   virtual std::shared_ptr<Qt6i::Qt6Initer> create_qt6_initer();
+
+  static bool check_and_change_cwd(std::shared_ptr<ApplicationContext> ctx);
 };
 
 }  // namespace app

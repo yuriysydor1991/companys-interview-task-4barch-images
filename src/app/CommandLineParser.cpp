@@ -81,11 +81,11 @@ bool CommandLineParser::parse_arg(std::shared_ptr<ApplicationContext> ctx,
   } else if (param == CMDParamNames::VERSIONW ||
              param == CMDParamNames::VERSION) {
     ctx->print_version_and_exit = true;
+  } else if (param == CMDParamNames::CWD || param == CMDParamNames::CWDW) {
+    ctx->startdir = nextParam;
   } else if (param == CMDParamNames::LOGPATHW ||
              param == CMDParamNames::LOGPATH) {
     // skipping already parsed cmd params
-    paramIndex++;
-    return true;
   } else {
     ctx->print_help_and_exit = true;
     ctx->push_error("Unknown parameter: " + param);
@@ -97,15 +97,16 @@ bool CommandLineParser::parse_arg(std::shared_ptr<ApplicationContext> ctx,
     paramIndex++;
   }
 
-  return (hasNext && nextParam.empty()) || true;
+  return true;
 }
 
 const std::set<std::string>& CommandLineParser::get_params_requiring_data()
 {
   // Place here command line parameters that are requiring
   // some data after it.
-  static const std::set<std::string> requireNext{CMDParamNames::LOGPATHW,
-                                                 CMDParamNames::LOGPATH};
+  static const std::set<std::string> requireNext{
+      CMDParamNames::LOGPATHW, CMDParamNames::LOGPATH, CMDParamNames::CWD,
+      CMDParamNames::CWDW};
 
   return requireNext;
 }

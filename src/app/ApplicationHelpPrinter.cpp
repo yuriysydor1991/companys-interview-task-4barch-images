@@ -38,6 +38,9 @@ int ApplicationHelpPrinter::run(std::shared_ptr<ApplicationContext> ctx)
             << CMDParamNames::VERSION
             << " - print application version, build git "
                "commit and configure date"
+            << std::endl
+            << CMDParamNames::CWD << " or " << CMDParamNames::CWDW
+            << "\t set up current working dir during application start"
             << std::endl;
 
   return 0;

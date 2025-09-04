@@ -63,6 +63,9 @@ struct ApplicationContext
    * @param errorDescription The application error description.
    */
   void push_error(const std::string& errorDescription);
+
+  /// @brief the desired CWD to start with
+  std::string startdir;
 };
 
 }  // namespace app
