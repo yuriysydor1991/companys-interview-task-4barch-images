@@ -22,7 +22,7 @@ This section contains list of required packages and/or tools that must be presen
 
 ## Quick build scripts
 
-In order for quick build commands examine the (src/scripts/build-debug.sh)[src/scripts/build-debug.sh] file for full debug build or run it:
+In order for quick build commands examine the [src/scripts/build-debug.sh](src/scripts/build-debug.sh) file for full debug build or run it:
 
 ```
 # in project root directory
