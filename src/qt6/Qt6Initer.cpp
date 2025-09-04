@@ -9,12 +9,15 @@
 #include "src/app/IApplication.h"
 #include "src/log/log.h"
 #include "src/qt6/QMLRes.h"
+#include "src/qt6/models/FileListModel.h"
 
 namespace Qt6i
 {
 
 int Qt6Initer::run(std::shared_ptr<app::ApplicationContext> actx)
 {
+  using FileListModelPtr = models::FileListModelPtr;
+  using FileListModel = models::FileListModel;
   using QMLRes = qmlpaths::QMLRes;
 
   assert(actx != nullptr);
@@ -24,7 +27,7 @@ int Qt6Initer::run(std::shared_ptr<app::ApplicationContext> actx)
     return app::IApplication::INVALID;
   }
 
-  imagesModel = FileListModel::create();
+  FileListModelPtr imagesModel = FileListModel::create();
 
   assert(imagesModel != nullptr);
 
@@ -34,7 +37,8 @@ int Qt6Initer::run(std::shared_ptr<app::ApplicationContext> actx)
   }
 
   QCoreApplication::setOrganizationName(
-      QString::fromStdString(project_decls::PROJECT_NAME));
+      QString::fromStdString(project_decls::PROJECT_NAME + " " +
+                             project_decls::PROJECT_BUILD_VERSION));
 
   QGuiApplication app(actx->argc, actx->argv);
   QQmlApplicationEngine engine;

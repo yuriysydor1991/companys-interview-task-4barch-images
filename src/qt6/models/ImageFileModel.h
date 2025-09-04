@@ -33,6 +33,9 @@ class ImageFileModel
   std::string current_operation() const;
   void current_operation(const std::string& opname);
 
+  int index();
+  void index(const int& nindex);
+
  private:
   bool read_file();
 
@@ -41,6 +44,8 @@ class ImageFileModel
 
   std::string mop;
   std::mutex opmutex;
+
+  int mindex{0};
 };
 
 using ImageFileModelPtr = ImageFileModel::ImageFileModelPtr;

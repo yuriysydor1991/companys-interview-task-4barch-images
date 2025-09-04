@@ -86,4 +86,8 @@ void ImageFileModel::current_operation(const std::string& opname)
   mop = opname;
 }
 
+int ImageFileModel::index() { return mindex; }
+
+void ImageFileModel::index(const int& nindex) { mindex = nindex; }
+
 }  // namespace Qt6i::models

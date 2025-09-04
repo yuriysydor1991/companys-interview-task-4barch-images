@@ -96,7 +96,7 @@ bool FileListModel::thread_perform(barchclib0::ILibPtr converter,
   static const QString decoding = QStringLiteral("Розкодовується");
   static const QString done = QStringLiteral("Зроблено");
   static const QString error = QStringLiteral("Помилка!");
-  
+
   if (is_bmp(model->filepath())) {
     model->current_operation(encoding.toUtf8().constData());
     if (!thread_deal_bmp(converter, model)) {
@@ -105,7 +105,7 @@ bool FileListModel::thread_perform(barchclib0::ILibPtr converter,
       return false;
     }
   } else if (is_barch(model->filepath())) {
-    model->current_operation(encoding.toUtf8().constData());
+    model->current_operation(decoding.toUtf8().constData());
     if (!thread_deal_barch(converter, model)) {
       LOGE("Failure while dealing with the Barch " << model->filepath());
       model->current_operation(error.toUtf8().constData());
@@ -114,7 +114,7 @@ bool FileListModel::thread_perform(barchclib0::ILibPtr converter,
   } else {
     LOGE("Unknown file type" << model->filepath());
   }
-  
+
   model->current_operation(done.toUtf8().constData());
 
   return true;
@@ -173,14 +173,14 @@ bool FileListModel::thread_deal_barch(barchclib0::ILibPtr converter,
   return false;
 }
 
-void FileListModel::convert_file(const int &index)
+void FileListModel::convert_file(const int &gindex)
 {
-  if (index < 0 || index > imagesSet.size()) {
+  if (gindex < 0 || gindex > imagesSet.size()) {
     LOGE("Invalid index provided");
     return;
   }
 
-  auto imgptr = imagesSet.at(index);
+  auto imgptr = imagesSet.at(gindex);
 
   assert(imgptr != nullptr);
 
@@ -193,16 +193,23 @@ void FileListModel::convert_file(const int &index)
     return;
   }
 
+  QModelIndex idx = index(imgptr->index());
+
   LOGD("Trying to create dealing thread");
 
-  mthqueue.insert(std::make_shared<std::thread>([this, converter, imgptr]() {
-    if (!thread_perform(converter, imgptr)) {
-      LOGE("Failure during task performing");
-      return;
-    }
+  mthqueue.insert(
+      std::make_shared<std::thread>([this, converter, imgptr, idx]() {
+        if (!thread_perform(converter, imgptr)) {
+          LOGE("Failure during task performing");
+          return;
+        }
 
-    LOGT("Performed successfully");
-  }));
+        LOGT("Performed successfully");
+
+        emit dataChanged(idx, idx, {ImageOperationRole});
+      }));
+
+  emit dataChanged(idx, idx, {ImageOperationRole});
 
   clean_threads();
 }
@@ -246,6 +253,11 @@ bool FileListModel::init(const std::filesystem::path &dpath)
     return false;
   }
 
+  if (fs::is_directory(dpath)) {
+    LOGE("Path " << dpath << " is not a directory!");
+    return false;
+  }
+
   LOGD("Listing directory: " << dpath);
 
   try {
@@ -262,6 +274,10 @@ bool FileListModel::init(const std::filesystem::path &dpath)
       }
 
       auto cimage = ImageFileModel::create(entry.path());
+
+      cimage->index(imagesSet.size());
+
+      LOGT("new image index: " << cimage->index());
 
       imagesSet.emplace_back(cimage);
     }

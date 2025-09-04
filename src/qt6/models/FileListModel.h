@@ -28,6 +28,7 @@ class FileListModel : public QAbstractListModel
     ImageOperationRole = Qt::UserRole + 3,
   };
 
+  // using muteximagepair = std::pair<std::mutex, >
   using ImageFileModelSet = std::vector<ImageFileModelPtr>;
   using FileListModelPtr = std::shared_ptr<FileListModel>;
   using threadsQueue = std::set<std::shared_ptr<std::thread>>;

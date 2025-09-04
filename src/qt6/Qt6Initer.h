@@ -4,7 +4,6 @@
 #include <memory>
 
 #include "src/app/ApplicationContext.h"
-#include "src/qt6/models/FileListModel.h"
 
 namespace Qt6i
 {
@@ -27,12 +26,6 @@ class Qt6Initer
    * Zero at success and non-zero value otherwise.
    */
   virtual int run(std::shared_ptr<app::ApplicationContext> actx);
-
- private:
-  using FileListModelPtr = models::FileListModelPtr;
-  using FileListModel = models::FileListModel;
-
-  FileListModelPtr imagesModel;
 };
 
 }  // namespace Qt6i

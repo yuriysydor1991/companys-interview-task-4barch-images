@@ -1,54 +1,61 @@
 import QtQuick
 import QtQuick.Controls 2.12
+import QtQuick.Layouts
 
-ListView {
-  id: compRoot
-  
-  anchors.fill: parent
-  
-  readonly property color colorSelected: "#0a0"
-  readonly property color colorRegular: "#fff"
+Item {
   readonly property color colorBorder: "#777"
   
-  property int selectedIndex: -1
-
-  model: ImagesFilesListProvider
+  anchors.fill: parent
+    
+  Text {
+    id: windgetTitle
+    
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    
+    font.pixelSize: 14
+    font.bold: true
+    text: "Список файлів для перетворення. Для перетворення необхідно клікнути по рядку файлу."
+  }
   
-  delegate: Rectangle {
-    id: delRoot
+  ListView {
+    id: listView
+    
+    anchors.top: windgetTitle.bottom
+    anchors.left: parent.left
     
     width: parent.width
-    height: fileDisplay.height
+    height: 500
     
-    color: getBG()
+    property int selectedIndex: -1
+
+    model: ImagesFilesListProvider
+    clip: true
     
-    border.color: colorBorder
-    
-    Text {
-      id: fileDisplay
-      anchors.top: parent.top
-      anchors.left: parent.left
+    delegate: Rectangle {
+      id: delRoot
       
-      text: path + " [" + size + "]" + (current_operation != "" ? " [" +current_operation + "]" : "" )
-    }
-    
-    MouseArea {
-      anchors.fill: parent
-      onClicked: { 
-        console.log("Row clicked: " + modelData.path)
-        modelData.selected = true
-        compRoot.selectedIndex = index
-        delRoot.updateBG()
+      width: parent.width
+      height: fileDisplay.height
+      
+      border.color: colorBorder
+      
+      Text {
+        id: fileDisplay
+        anchors.top: parent.top
+        anchors.left: parent.left
+        
+        text: path + " [" + size + "]" + (current_operation != "" ? " [" +current_operation + "]" : "" )
+      }
+      
+      MouseArea {
+        anchors.fill: parent
+        onClicked: { 
+          console.log("Row clicked: " + path)
+          listView.model.convert_file(index)
+          listView.selectedIndex = index
+        }
       }
     }
-    
-    function updateBG() {
-      color = getBG()
-    }
-    
-    function getBG() {
-      console.log("row is selected" + modelData.selected)
-      return compRoot.selectedIndex == index ? colorSelected : colorRegular
-    }
-  }
-}
+  } // listview
+} // item

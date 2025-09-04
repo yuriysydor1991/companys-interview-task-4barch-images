@@ -29,7 +29,8 @@ sudo apt install -y git g++ cmake
 sudo apt install -y qt6-base-dev qt6-base-dev-tools \
   qt6-declarative-dev qt6-tools-dev qt6-tools-dev-tools \
   qml6-module-qtquick qml6-module-qtqml-workerscript \
-  qml6-module-qtquick-templates qml6-module-qtquick-window
+  qml6-module-qtquick-templates qml6-module-qtquick-window \
+  qml6-module-qtquick-layouts
 ```
 
 ## Required tools for the MS Windows based OS
