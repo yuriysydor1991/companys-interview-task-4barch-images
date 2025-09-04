@@ -19,6 +19,7 @@ FileListModel::~FileListModel()
       thp->join();
     }
   }
+  LOGD("Done!");
 }
 
 FileListModel::FileListModel(QObject *parent)
@@ -156,6 +157,8 @@ bool FileListModel::thread_deal_barch(barchclib0::ILibPtr converter,
     return false;
   }
 
+  LOGE("!!! BMP saving is not implemented !!!");
+
   return true;
 }
 
@@ -209,7 +212,10 @@ bool FileListModel::is_barch(const std::filesystem::path &gpath)
          gpath.extension().string() == bae;
 }
 
-bool FileListModel::is_image(const std::filesystem::path &gpath) {}
+bool FileListModel::is_image(const std::filesystem::path &gpath)
+{
+  return is_barch(gpath) || is_bmp(gpath) || gpath.extension() == ".png";
+}
 
 bool FileListModel::init()
 {
@@ -238,6 +244,11 @@ bool FileListModel::init(const std::filesystem::path &dpath)
       }
 
       LOGT("Obtained file: " << entry.path().filename().string());
+
+      if (!is_image(entry.path())) {
+        LOGT("Not an image");
+        continue;
+      }
 
       auto cimage = ImageFileModel::create(entry.path());
 
