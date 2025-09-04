@@ -22,12 +22,25 @@ This section contains list of required packages and/or tools that must be presen
 
 ## Quick build scripts
 
+
+### the debug quick build script
+
 In order for quick build commands examine the [src/scripts/build-debug.sh](src/scripts/build-debug.sh) file for full debug build or run it:
 
 ```
 # in project root directory
 
 src/scripts/build-debug.sh
+```
+
+### The Release quick build script
+
+In order for quick release build commands examine the [src/scripts/build-release.sh](src/scripts/build-release.sh) file for full release build or run it:
+
+```
+# in project root directory
+
+src/scripts/build-release.sh
 ```
 
 ## Required tools for the GNU/Linux based OS
