@@ -29,6 +29,8 @@ int Qt6Initer::run(std::shared_ptr<app::ApplicationContext> actx)
   QGuiApplication app(actx->argc, actx->argv);
   QQmlApplicationEngine engine;
 
+  engine.addImportPath(QMLRes::components_path);
+  
   engine.load(QMLRes::get_url_main());
 
   if (engine.rootObjects().isEmpty()) {
