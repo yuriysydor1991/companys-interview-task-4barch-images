@@ -39,6 +39,13 @@ set(
   "The Dockerfile destination name"
 )
 
+set(
+  CONVERT_IMAGES_DIR
+  ""
+  CACHE STRING 
+  "The docker runner command directory forward to convert"
+)
+
 message(STATUS "Docker executable: ${DOCKER_EXEC}")
 message(STATUS "Dockerfile configure source full path: ${DOCKERFILE_SRC}")
 message(STATUS "Dockerfile destination name: ${DOCKERFILE_DST}")

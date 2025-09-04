@@ -182,6 +182,12 @@ option(
   OFF
 )
 
+set(
+  IN_DOCKER_IMAGES_DIRECTORY "/var/share/barch-coder-images"
+  CACHE STRING
+  "The in-Docker images directory mounting point"
+)
+
 string(TIMESTAMP PROJECT_CONFIGURE_DATE "%Y-%m-%d %H:%M:%S")
 
 execute_process(

@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.13)
 
+if (CONVERT_IMAGES_DIR STREQUAL "")
+  message(FATAL_ERROR "provide a CONVERT_IMAGES_DIR CMake variable value for images dir")
+endif()
+
 set(
   DOCKER_SINGLE_BUILD_CMD
     DOCKER_HOST=${DOCKER_HOST_STR} DOCKER_BUILDKIT=1 ${DOCKER_EXEC} build 
@@ -11,12 +15,13 @@ set(
 set(
   DOCKER_SINGLE_RUN_CMD
     xhost +local:root && 
-    DOCKER_HOST=${DOCKER_HOST_STR} ${DOCKER_EXEC} run --rm 
+    DOCKER_HOST=${DOCKER_HOST_STR} ${DOCKER_EXEC} run --rm -it
     --env DISPLAY=$$DISPLAY
     --env QT_X11_NO_MITSHM=1
     --volume /tmp/.X11-unix:/tmp/.X11-unix
     --volume $$HOME/.Xauthority:/root/.Xauthority
     -v $(XDG_RUNTIME_DIR):$(XDG_RUNTIME_DIR)
+    -v ${CONVERT_IMAGES_DIR}:${IN_DOCKER_IMAGES_DIRECTORY}
     --network host
     ${DOCKER_SINGLE_RUN_NAME} &&
     xhost -local:root
