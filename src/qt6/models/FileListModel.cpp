@@ -92,19 +92,30 @@ QHash<int, QByteArray> FileListModel::roleNames() const
 bool FileListModel::thread_perform(barchclib0::ILibPtr converter,
                                    ImageFileModelPtr model)
 {
+  static const QString encoding = QStringLiteral("Кодується");
+  static const QString decoding = QStringLiteral("Розкодовується");
+  static const QString done = QStringLiteral("Зроблено");
+  static const QString error = QStringLiteral("Помилка!");
+  
   if (is_bmp(model->filepath())) {
+    model->current_operation(encoding.toUtf8().constData());
     if (!thread_deal_bmp(converter, model)) {
       LOGE("Failure while dealing with the BMP " << model->filepath());
+      model->current_operation(error.toUtf8().constData());
       return false;
     }
   } else if (is_barch(model->filepath())) {
+    model->current_operation(encoding.toUtf8().constData());
     if (!thread_deal_barch(converter, model)) {
       LOGE("Failure while dealing with the Barch " << model->filepath());
+      model->current_operation(error.toUtf8().constData());
       return false;
     }
   } else {
     LOGE("Unknown file type" << model->filepath());
   }
+  
+  model->current_operation(done.toUtf8().constData());
 
   return true;
 }
@@ -159,7 +170,7 @@ bool FileListModel::thread_deal_barch(barchclib0::ILibPtr converter,
 
   LOGE("!!! BMP saving is not implemented !!!");
 
-  return true;
+  return false;
 }
 
 void FileListModel::convert_file(const int &index)
