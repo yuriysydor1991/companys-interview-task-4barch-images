@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls 2.12
-import QtQuick.Layouts
 
 Item {
   readonly property color colorBorder: "#777"
