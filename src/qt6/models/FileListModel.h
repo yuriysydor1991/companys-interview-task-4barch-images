@@ -5,6 +5,8 @@
 #include <QStringList>
 #include <memory>
 
+#include "src/qt6/models/ImageFileModel.h"
+
 namespace Qt6i::models
 {
 
@@ -17,8 +19,11 @@ class FileListModel : public QAbstractListModel
  public:
   enum Roles
   {
-    NameRole = Qt::UserRole + 1
+    ImagePathRole = Qt::UserRole + 1,
+    ImageSizeRole = Qt::UserRole + 2,
   };
+  
+  using ImageFileModelSet = std::vector<ImageFileModelPtr>;
 
   virtual ~FileListModel() = default;
   explicit FileListModel(QObject *parent = nullptr);
@@ -33,6 +38,8 @@ class FileListModel : public QAbstractListModel
   Q_INVOKABLE void addItem(const QString &item);
 
  private:
+ 
+ ImageFileModelSet imagesSet;
 };
 
 }  // namespace Qt6i::models

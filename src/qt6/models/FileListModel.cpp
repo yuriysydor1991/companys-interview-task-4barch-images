@@ -2,7 +2,11 @@
 
 #include <QAbstractListModel>
 #include <QStringList>
+#include <QString>
+
 #include <memory>
+
+#include "src/log/log.h"
 
 namespace Qt6i::models
 {
@@ -13,16 +17,30 @@ int FileListModel::rowCount(const QModelIndex &parent) const
 {
   Q_UNUSED(parent);
 
-  return 0;  // m_data.size();
+ return imagesSet.size();
 }
 
 QVariant FileListModel::data(const QModelIndex &index, int role) const
 {
-  if (!index.isValid() || index.row() < 0 /* || index.row() >= m_data.size() */)
+  if (!index.isValid() || index.row() < 0 || index.row() >= imagesSet.size()) {
+    LOGE("Invalid index provided: " << index.row());
     return {};
+  }
 
-  //    if (role == NameRole || role == Qt::DisplayRole)
-  //        return m_data.at(index.row());
+  const ImageFileModelPtr image = imagesSet.at(index.row());
+  
+  if (image == nullptr) {
+    LOGE("Retrieved invalid object pointer");
+    return {};
+  }
+  
+  if (role == ImagePathRole || role == Qt::DisplayRole) {
+    return QString::fromStdString(image->filepath().string());
+  }
+  
+  if (role == ImageSizeRole) {
+    return QString::number(image->bytes_total());
+  }
 
   return {};
 }
@@ -30,7 +48,10 @@ QVariant FileListModel::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> FileListModel::roleNames() const
 {
   QHash<int, QByteArray> roles;
-  roles[NameRole] = "name";
+  
+  roles[ImagePathRole] = "path";
+  roles[ImageSizeRole] = "size";
+  
   return roles;
 }
 

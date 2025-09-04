@@ -13,6 +13,7 @@ qt_add_library(
   TheBarchCoderQt6ModelsObj OBJECT
   MANUAL_FINALIZATION
   FileListModel.cpp
+  ImageFileModel.cpp
 )
 
 target_include_directories(
