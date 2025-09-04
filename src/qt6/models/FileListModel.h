@@ -5,9 +5,11 @@
 #include <QStringList>
 #include <filesystem>
 #include <memory>
+#include <set>
+#include <thread>
 
-#include "src/qt6/models/ImageFileModel.h"
 #include "LibraryFacade.h"
+#include "src/qt6/models/ImageFileModel.h"
 
 namespace Qt6i::models
 {
@@ -28,8 +30,9 @@ class FileListModel : public QAbstractListModel
 
   using ImageFileModelSet = std::vector<ImageFileModelPtr>;
   using FileListModelPtr = std::shared_ptr<FileListModel>;
+  using threadsQueue = std::set<std::shared_ptr<std::thread>>;
 
-  virtual ~FileListModel() = default;
+  virtual ~FileListModel();
   explicit FileListModel(QObject *parent = nullptr);
 
   int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -39,7 +42,7 @@ class FileListModel : public QAbstractListModel
 
   QHash<int, QByteArray> roleNames() const override;
 
-  Q_INVOKABLE void convert_file(const int& index);
+  Q_INVOKABLE void convert_file(const int &index);
 
   /// @brief init object with a current directory path
   bool init();
@@ -50,11 +53,24 @@ class FileListModel : public QAbstractListModel
   static FileListModelPtr create(QObject *parent = nullptr);
 
  private:
+  static bool is_bmp(const std::filesystem::path &gpath);
+  static bool is_barch(const std::filesystem::path &gpath);
+  static bool is_image(const std::filesystem::path &gpath);
+
+  static bool thread_perform(barchclib0::ILibPtr converter,
+                             ImageFileModelPtr model);
+  static bool thread_deal_bmp(barchclib0::ILibPtr converter,
+                              ImageFileModelPtr model);
+  static bool thread_deal_barch(barchclib0::ILibPtr converter,
+                                ImageFileModelPtr model);
+
+  void clean_threads();
+
   ImageFileModelSet imagesSet;
-  
+
   barchclib0::LibraryFacade cfactory;
-  
-  barchclib0::ILibPtr converter;
+
+  threadsQueue mthqueue;
 };
 
 using FileListModelPtr = FileListModel::FileListModelPtr;

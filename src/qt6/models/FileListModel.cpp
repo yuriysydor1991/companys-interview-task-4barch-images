@@ -11,10 +11,31 @@
 namespace Qt6i::models
 {
 
-FileListModel::FileListModel(QObject *parent) : QAbstractListModel{parent}, cfactory{}, converter{cfactory.create()} 
+FileListModel::~FileListModel()
 {
-  if (converter == nullptr) {
-    LOGE("Fail to create converter instance");
+  LOGD("Waiting threads");
+  for (auto thp : mthqueue) {
+    if (thp->joinable()) {
+      thp->join();
+    }
+  }
+}
+
+FileListModel::FileListModel(QObject *parent)
+    : QAbstractListModel{parent}, cfactory{}
+{
+}
+
+void FileListModel::clean_threads()
+{
+  LOGD("Cleaning finished threads");
+
+  for (auto thiter = mthqueue.begin(); thiter != mthqueue.end(); ++thiter) {
+    auto thp = *thiter;
+
+    if (!thp->joinable()) {
+      thiter = mthqueue.erase(thiter);
+    }
   }
 }
 
@@ -67,10 +88,128 @@ QHash<int, QByteArray> FileListModel::roleNames() const
   return roles;
 }
 
-void FileListModel::convert_file(const int& index)
+bool FileListModel::thread_perform(barchclib0::ILibPtr converter,
+                                   ImageFileModelPtr model)
 {
-  
+  if (is_bmp(model->filepath())) {
+    if (!thread_deal_bmp(converter, model)) {
+      LOGE("Failure while dealing with the BMP " << model->filepath());
+      return false;
+    }
+  } else if (is_barch(model->filepath())) {
+    if (!thread_deal_barch(converter, model)) {
+      LOGE("Failure while dealing with the Barch " << model->filepath());
+      return false;
+    }
+  } else {
+    LOGE("Unknown file type" << model->filepath());
+  }
+
+  return true;
 }
+
+bool FileListModel::thread_deal_bmp(barchclib0::ILibPtr converter,
+                                    ImageFileModelPtr model)
+{
+  auto img = converter->read(model->filepath());
+
+  if (img == nullptr) {
+    LOGE("Fail while reading the image");
+    return false;
+  }
+
+  // encode here!
+  auto barch = converter->bmp_to_barch(img);
+
+  if (barch == nullptr) {
+    LOGE("Failure during the barch conversion");
+    return false;
+  }
+
+  auto nfilepath = model->filepath().parent_path() /
+                   (model->filepath().filename().string() + "packed.barch");
+
+  barch->filepath(nfilepath);
+
+  if (!converter->write(barch)) {
+    LOGE("Failure during barch save");
+    return false;
+  }
+
+  return true;
+}
+
+bool FileListModel::thread_deal_barch(barchclib0::ILibPtr converter,
+                                      ImageFileModelPtr model)
+{
+  auto img = converter->read(model->filepath());
+
+  if (img == nullptr) {
+    LOGE("Fail while reading the image");
+    return false;
+  }
+
+  auto bmp = converter->barch_to_bmp(img);
+
+  if (bmp == nullptr) {
+    LOGE("Fail to unpack the barch: " << model->filepath());
+    return false;
+  }
+
+  return true;
+}
+
+void FileListModel::convert_file(const int &index)
+{
+  if (index < 0 || index > imagesSet.size()) {
+    LOGE("Invalid index provided");
+    return;
+  }
+
+  auto imgptr = imagesSet.at(index);
+
+  assert(imgptr != nullptr);
+
+  barchclib0::ILibPtr converter = cfactory.create();
+
+  assert(converter != nullptr);
+
+  if (converter == nullptr) {
+    LOGE("Fail to create converter instance");
+    return;
+  }
+
+  LOGD("Trying to create dealing thread");
+
+  mthqueue.insert(std::make_shared<std::thread>([this, converter, imgptr]() {
+    if (!thread_perform(converter, imgptr)) {
+      LOGE("Failure during task performing");
+      return;
+    }
+
+    LOGT("Performed successfully");
+  }));
+
+  clean_threads();
+}
+
+bool FileListModel::is_bmp(const std::filesystem::path &gpath)
+{
+  static const std::string bmpe = ".bmp";
+
+  return gpath.extension().string() == bmpe;
+}
+
+bool FileListModel::is_barch(const std::filesystem::path &gpath)
+{
+  static const std::string barche = ".barch";
+  static const std::string bae = ".barch";
+
+  return gpath.extension().string() == barche ||
+         gpath.extension().string() == bae;
+}
+
+bool FileListModel::is_image(const std::filesystem::path &gpath) {}
 
 bool FileListModel::init()
 {
