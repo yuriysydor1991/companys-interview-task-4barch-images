@@ -40,6 +40,8 @@ class LibMain : virtual public barchclib0::ILib
 
   virtual ILibPtr duplicate() override;
 
+  virtual IBarchImagePtr create_empty_bmp() override;
+
   static LibMainPtr create();
 
  private:

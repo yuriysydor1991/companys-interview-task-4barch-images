@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include "IBarchImage.h"
 #include "ILib.h"
 
 namespace barchclib0

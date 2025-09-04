@@ -34,6 +34,7 @@ class LibMain : public barchclib0::ILib
               (override));
   MOCK_METHOD(bool, write, (IBarchImagePtr barch), (override));
   MOCK_METHOD(ILibPtr, duplicate, (), (override));
+  MOCK_METHOD(IBarchImagePtr, create_empty_bmp, (), (override));
 
   static LibMainPtr create() { return std::make_shared<LibMain>(); }
 };

@@ -31,6 +31,9 @@ class ILib
 
   /// @brief duplicate the object
   virtual ILibPtr duplicate() = 0;
+
+  /// @brief Creates empty BMP image instance to externally fill with data
+  virtual IBarchImagePtr create_empty_bmp() = 0;
 };
 
 using ILibPtr = ILib::ILibPtr;

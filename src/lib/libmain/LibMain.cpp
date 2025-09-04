@@ -141,6 +141,13 @@ bool LibMain::write(IBarchImagePtr barch)
 
 LibMain::ILibPtr LibMain::duplicate() { return create(); }
 
+IBarchImagePtr LibMain::create_empty_bmp()
+{
+  LOGT("Creating empty BMP image instance");
+
+  return BMPImage::create();
+}
+
 LibMainPtr LibMain::create() { return std::make_shared<LibMain>(); }
 
 }  // namespace lib0impl
