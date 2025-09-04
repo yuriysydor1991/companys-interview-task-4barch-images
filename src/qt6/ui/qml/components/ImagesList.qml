@@ -8,15 +8,11 @@ ListView {
   
   readonly property color colorSelected: "#0a0"
   readonly property color colorRegular: "#fff"
-  readonly property color colorBorder: "#444"
+  readonly property color colorBorder: "#777"
   
   property int selectedIndex: -1
 
-  model: [
-    { "path": "/tmp/nofile1.barch", "size": 123, "selected": false },
-    { "path": "/tmp/nofile2.barch", "size": 456, "selected": false },
-    { "path": "/tmp/nofile2.barch", "size": 789, "selected": false },
-  ]
+  model: ImagesFilesListProvider
   
   delegate: Rectangle {
     id: delRoot
@@ -33,7 +29,7 @@ ListView {
       anchors.top: parent.top
       anchors.left: parent.left
       
-      text: modelData.path + " [" + modelData.size + "]"
+      text: path + " [" + size + "]" + (current_operation != "" ? " [" +current_operation + "]" : "" )
     }
     
     MouseArea {

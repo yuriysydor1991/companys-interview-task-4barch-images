@@ -3,10 +3,10 @@
 
 #include <QAbstractListModel>
 #include <QStringList>
-
-#include <memory>
-#include <filesystem>
 #include <cstddef>
+#include <filesystem>
+#include <memory>
+#include <mutex>
 #include <string>
 
 namespace Qt6i::models
@@ -19,22 +19,28 @@ class ImageFileModel
 {
  public:
   using ImageFileModelPtr = std::shared_ptr<ImageFileModel>;
-  
+
   virtual ~ImageFileModel() = default;
   ImageFileModel(const std::string& gpath);
-  
+
   const std::filesystem::path& filepath() const;
-  bool filepath(const std::filesystem::path& npath) ;
-  
-  const size_t& bytes_total() const ;
-  
+  bool filepath(const std::filesystem::path& npath);
+
+  const size_t& bytes_total() const;
+
   static ImageFileModelPtr create(const std::filesystem::path& npath);
 
-private:
+  std::string current_operation() const;
+  void current_operation(const std::string& opname);
+
+ private:
   bool read_file();
-  
+
   std::filesystem::path mpath;
   size_t m_size{0U};
+
+  std::string mop;
+  std::mutex opmutex;
 };
 
 using ImageFileModelPtr = ImageFileModel::ImageFileModelPtr;

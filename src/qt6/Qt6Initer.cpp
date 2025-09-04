@@ -2,6 +2,7 @@
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 #include <QString>
 
 #include "project-global-decls.h"
@@ -23,6 +24,15 @@ int Qt6Initer::run(std::shared_ptr<app::ApplicationContext> actx)
     return app::IApplication::INVALID;
   }
 
+  imagesModel = FileListModel::create();
+
+  assert(imagesModel != nullptr);
+
+  if (imagesModel == nullptr || !imagesModel->init()) {
+    LOGE("Failure with filelist model");
+    return app::IApplication::INVALID;
+  }
+
   QCoreApplication::setOrganizationName(
       QString::fromStdString(project_decls::PROJECT_NAME));
 
@@ -30,6 +40,9 @@ int Qt6Initer::run(std::shared_ptr<app::ApplicationContext> actx)
   QQmlApplicationEngine engine;
 
   engine.addImportPath(QMLRes::components_path);
+
+  engine.rootContext()->setContextProperty("ImagesFilesListProvider",
+                                           imagesModel.get());
 
   engine.load(QMLRes::get_url_main());
 
