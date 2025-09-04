@@ -255,7 +255,7 @@ bool FileListModel::is_bmp(const std::filesystem::path &gpath)
 bool FileListModel::is_barch(const std::filesystem::path &gpath)
 {
   static const std::string barche = ".barch";
-  static const std::string bae = ".barch";
+  static const std::string bae = ".ba";
 
   return gpath.extension().string() == barche ||
          gpath.extension().string() == bae;
