@@ -11,7 +11,12 @@
 namespace Qt6i::models
 {
 
-FileListModel::FileListModel(QObject *parent) : QAbstractListModel(parent) {}
+FileListModel::FileListModel(QObject *parent) : QAbstractListModel{parent}, cfactory{}, converter{cfactory.create()} 
+{
+  if (converter == nullptr) {
+    LOGE("Fail to create converter instance");
+  }
+}
 
 int FileListModel::rowCount(const QModelIndex &parent) const
 {
@@ -62,7 +67,10 @@ QHash<int, QByteArray> FileListModel::roleNames() const
   return roles;
 }
 
-void FileListModel::addItem(const QString &item) {}
+void FileListModel::convert_file(const int& index)
+{
+  
+}
 
 bool FileListModel::init()
 {

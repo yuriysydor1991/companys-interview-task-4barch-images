@@ -22,7 +22,9 @@ target_include_directories(
     ${CMAKE_SOURCE_DIR}
     ${CMAKE_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
-  PRIVATE Qt6::Core
+  PUBLIC 
+    ${CMAKE_SOURCE_DIR}/src/lib/facade/includes
+  PUBLIC Qt6::Core
 )
 
 target_link_libraries(

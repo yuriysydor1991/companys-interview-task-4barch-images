@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "src/qt6/models/ImageFileModel.h"
+#include "LibraryFacade.h"
 
 namespace Qt6i::models
 {
@@ -38,7 +39,7 @@ class FileListModel : public QAbstractListModel
 
   QHash<int, QByteArray> roleNames() const override;
 
-  Q_INVOKABLE void addItem(const QString &item);
+  Q_INVOKABLE void convert_file(const int& index);
 
   /// @brief init object with a current directory path
   bool init();
@@ -50,6 +51,10 @@ class FileListModel : public QAbstractListModel
 
  private:
   ImageFileModelSet imagesSet;
+  
+  barchclib0::LibraryFacade cfactory;
+  
+  barchclib0::ILibPtr converter;
 };
 
 using FileListModelPtr = FileListModel::FileListModelPtr;
