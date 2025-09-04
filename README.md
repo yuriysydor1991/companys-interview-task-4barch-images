@@ -15,15 +15,11 @@ git clone https://github.com/yuriysydor1991/companys-interview-task-4barch-image
 
 After this command executes you should find a directory named `ompanys-interview-task-4barch-images` inside your current one. So enter it by calling `cd ompanys-interview-task-4barch-images`.
 
-# Requirements
+# Quick build scripts
 
+This section contains a quick introduction for building commands. More detailed description on how to install necessary packages with project supported features see below.
 
-This section contains list of required packages and/or tools that must be present in the system in order to build templated project.
-
-## Quick build scripts
-
-
-### the debug quick build script
+## The debug quick build script
 
 In order for quick build commands examine the [src/scripts/build-debug.sh](src/scripts/build-debug.sh) file for full debug build or run it:
 
@@ -33,7 +29,7 @@ In order for quick build commands examine the [src/scripts/build-debug.sh](src/s
 src/scripts/build-debug.sh
 ```
 
-### The Release quick build script
+## The Release quick build script
 
 In order for quick release build commands examine the [src/scripts/build-release.sh](src/scripts/build-release.sh) file for full release build or run it:
 
@@ -42,6 +38,11 @@ In order for quick release build commands examine the [src/scripts/build-release
 
 src/scripts/build-release.sh
 ```
+
+# Requirements
+
+
+This section contains list of required packages and/or tools that must be present in the system in order to build templated project.
 
 ## Required tools for the GNU/Linux based OS
 
