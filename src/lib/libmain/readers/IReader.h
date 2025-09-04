@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <memory>
 
-#include "src/lib/facade/IBarchImage.h"
+#include "IBarchImage.h"
 
 namespace barchclib0::readers
 {

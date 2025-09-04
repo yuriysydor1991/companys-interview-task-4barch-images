@@ -7,7 +7,6 @@
 
 #include "IBarchImage.h"
 #include "ILib.h"
-#include "src/lib/facade/ILib.h"
 #include "src/lib/libmain/images/BMPImage.h"
 #include "src/lib/libmain/images/BarchImage.h"
 #include "src/lib/libmain/readers/IReader.h"

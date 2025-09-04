@@ -6,14 +6,7 @@ target_sources(
     LibraryFacade.cpp
 )
 
-install(
-  FILES 
-    LibraryFacade.h 
-    LibraryContext.h
-    ILib.h
-    IBarchImage.h
-  DESTINATION include/${PROJECT_LIBRARY_NAME} 
-  COMPONENT Development
-)
+install(DIRECTORY includes/ DESTINATION include/${PROJECT_LIBRARY_NAME})
 
 add_subdirectory(tests)
+

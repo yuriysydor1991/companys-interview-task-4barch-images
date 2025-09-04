@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 
-#include "src/lib/facade/IBarchImage.h"
+#include "IBarchImage.h"
 
 namespace barchclib0
 {

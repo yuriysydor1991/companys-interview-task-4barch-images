@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-#include "src/lib/facade/IBarchImage.h"
+#include "IBarchImage.h"
 #include "src/lib/libmain/converters/BMPAndBarchConverter0Base.h"
 #include "src/lib/libmain/images/BarchImage.h"
 

@@ -1,4 +1,4 @@
-#include "src/lib/facade/LibraryFacade.h"
+#include "LibraryFacade.h"
 
 #include <cassert>
 #include <iostream>

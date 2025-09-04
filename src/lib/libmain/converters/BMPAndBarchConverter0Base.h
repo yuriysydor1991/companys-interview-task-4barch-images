@@ -1,7 +1,7 @@
 #ifndef THE_BMP_2_BARCH_IMAGE_CODER_PROJECT_BMPANDBARCHCONVERTER0BASE_CLASS_H
 #define THE_BMP_2_BARCH_IMAGE_CODER_PROJECT_BMPANDBARCHCONVERTER0BASE_CLASS_H
 
-#include "src/lib/facade/IBarchImage.h"
+#include "IBarchImage.h"
 #include "src/lib/libmain/images/BMPImage.h"
 #include "src/lib/libmain/images/BarchImage.h"
 

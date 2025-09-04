@@ -9,7 +9,7 @@
 #include <memory>
 #include <vector>
 
-#include "src/lib/facade/IBarchImage.h"
+#include "IBarchImage.h"
 #include "src/log/log.h"
 
 namespace barchclib0::converters

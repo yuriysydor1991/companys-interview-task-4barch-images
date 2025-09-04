@@ -6,8 +6,8 @@
 #include <iostream>
 
 #include "BMPReaderDataProvider.h"
+#include "IBarchImage.h"
 #include "readers_includes.h"
-#include "src/lib/facade/IBarchImage.h"
 #include "src/lib/libmain/readers/BMPReader.h"
 
 using namespace barchclib0;

@@ -8,7 +8,7 @@
 #include <memory>
 #include <set>
 
-#include "src/lib/facade/ILib.h"
+#include "ILib.h"
 
 namespace lib0impl
 {
