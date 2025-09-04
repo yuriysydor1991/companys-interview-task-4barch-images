@@ -30,7 +30,7 @@ int Qt6Initer::run(std::shared_ptr<app::ApplicationContext> actx)
   QQmlApplicationEngine engine;
 
   engine.addImportPath(QMLRes::components_path);
-  
+
   engine.load(QMLRes::get_url_main());
 
   if (engine.rootObjects().isEmpty()) {

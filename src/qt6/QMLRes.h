@@ -26,7 +26,8 @@ struct QMLRes
       "qrc:/ui/qml/main.qml";
   inline static constexpr const char* const the_logo_path =
       "qrc:/ui/resources/images/kytok.org.ua-logo.png";
-  inline static constexpr const char* const components_path = "qrc:/ui/qml/components";
+  inline static constexpr const char* const components_path =
+      "qrc:/ui/qml/components";
 };
 
 }  // namespace Qt6i::qmlpaths

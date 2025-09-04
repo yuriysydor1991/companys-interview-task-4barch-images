@@ -6,42 +6,33 @@ set(CMAKE_AUTOUIC ON)
 
 find_package(
   Qt6 REQUIRED 
-  COMPONENTS Core Gui Qml Quick QuickControls2
+  COMPONENTS Core
 )
 
 qt_add_library(
-  ${QT6_OBJECT_NAME} OBJECT
+  TheBarchCoderQt6ModelsObj OBJECT
   MANUAL_FINALIZATION
-  Qt6Initer.cpp
-  resources.qrc
-  QMLRes.cpp
+  FileListModel.cpp
 )
 
 target_include_directories(
-  ${QT6_OBJECT_NAME}
+  TheBarchCoderQt6ModelsObj
   PRIVATE
     ${CMAKE_SOURCE_DIR}
     ${CMAKE_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
-  PUBLIC Qt6::Core
+  PRIVATE Qt6::Core
 )
 
 target_link_libraries(
-  ${QT6_OBJECT_NAME}
-  PRIVATE
-    Qt6::Core
-    Qt6::Gui
-    Qt6::Qml
-    Qt6::Quick
-    Qt6::QuickControls2
+  TheBarchCoderQt6ModelsObj
+  Qt6::Core
 )
 
 target_link_libraries(
   ${PROJECT_BINARY_NAME}
-  ${QT6_OBJECT_NAME}
+  TheBarchCoderQt6ModelsObj
 )
 
-qt_finalize_target(${QT6_OBJECT_NAME})
-
-add_subdirectory(models)
+qt_finalize_target(TheBarchCoderQt6ModelsObj)
 
