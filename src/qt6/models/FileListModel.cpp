@@ -1,8 +1,8 @@
 #include "src/qt6/models/FileListModel.h"
 
 #include <QAbstractListModel>
-#include <QString>
 #include <QImage>
+#include <QString>
 #include <QStringList>
 #include <exception>
 #include <memory>
@@ -180,16 +180,15 @@ bool FileListModel::thread_deal_barch(barchclib0::ILibPtr converter,
     LOGE("Fail to unpack the barch: " << model->filepath());
     return false;
   }
-  
-  QImage qimg(bmp->data().data(), 
-    static_cast<int>(bmp->width()), 
-    static_cast<int>(bmp->height()), 
-    static_cast<int>(bmp->width()), 
-    QImage::Format_Grayscale8);
-  
-  std::filesystem::path newIPath = model->filepath().parent_path() /
-                   (model->filepath().filename().string() + "unpacked.bmp");
-  
+
+  QImage qimg(bmp->data().data(), static_cast<int>(bmp->width()),
+              static_cast<int>(bmp->height()), static_cast<int>(bmp->width()),
+              QImage::Format_Grayscale8);
+
+  std::filesystem::path newIPath =
+      model->filepath().parent_path() /
+      (model->filepath().filename().string() + "unpacked.bmp");
+
   if (!qimg.save(QString::fromStdString(newIPath.string()))) {
     LOGE("Fail to save image to " << newIPath);
     return false;
@@ -310,7 +309,8 @@ bool FileListModel::init(const std::filesystem::path &dpath)
 
       LOGT("new image index: " << cimage->index());
 
-      muteximagepair p(std::make_shared<std::mutex>(), ImageFileModelPtr(cimage));
+      muteximagepair p(std::make_shared<std::mutex>(),
+                       ImageFileModelPtr(cimage));
 
       imagesSet.emplace_back(p);
     }

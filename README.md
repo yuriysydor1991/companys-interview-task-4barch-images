@@ -2,6 +2,8 @@
 
 Project implemented due to company's interview test task execution.
 
+**Best runs on the Linux Mint (Ubuntu-derived)** Other systems may require packages names investigation and change.
+
 # Cloning the barch-encoder project
 
 In order to fast-start implementing a new application clone this project into your local directory by executing next command in the terminal (GNU/Linux based):
@@ -15,7 +17,18 @@ After this command executes you should find a directory named `ompanys-interview
 
 # Requirements
 
+
 This section contains list of required packages and/or tools that must be present in the system in order to build templated project.
+
+## Quick build scripts
+
+In order for quick build commands examine the (src/scripts/build-debug.sh)[src/scripts/build-debug.sh] file for full debug build or run it:
+
+```
+# in project root directory
+
+src/scripts/build-debug.sh
+```
 
 ## Required tools for the GNU/Linux based OS
 
