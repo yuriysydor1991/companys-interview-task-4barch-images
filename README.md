@@ -42,11 +42,11 @@ src/scripts/build-release.sh
 # Requirements
 
 
-This section contains list of required packages and/or tools that must be present in the system in order to build templated project.
+This section contains list of required packages and/or tools that must be present in the system in order to build project.
 
 ## Required tools for the GNU/Linux based OS
 
-In order to build minimum template project install the GCC C++ compiler with CMake and Git.
+In order to build project install the GCC C++ compiler with CMake and Git.
 
 ```
 # the default dev tools
@@ -148,7 +148,7 @@ Look for the details at the [Enabling the flatpak package generation support](#e
 
 ## Optional for the Docker container runs
 
-In order to be able to start the Docker containers with the built template application install it with the next command:
+In order to be able to start the Docker containers with the build application install it with the next command:
 
 ```
 sudo apt install -y docker.io docker-buildx
@@ -201,10 +201,6 @@ To proceed the application implementation right away look for the `main.qml` fil
 It's preferable to create other directories which would contain implemented QML-components of the application and include them into the `main.qml` file implementation, rather than put all the code inside the `main.qml` class itself (for the trivial applications in may be ok).
 
 Some Qt6 related code may be introduced into the `Qt6Initer` class for supporting the better Qt6 experience.
-
-## Changing the project and executable name
-
-Change the name of the project in the project's root `CMakeLists.txt` file by introducing a new value for the the `PROJECT_NAME` and/or `PROJECT_BINARY_NAME` variable which is located at `cmake/template-project-misc-variables-declare.cmake`. It is recommended to do so the executable will represent your new application name instead of templated default one - the `barch-encoder`.
 
 ## Introducing custom command line parameters
 
@@ -427,7 +423,7 @@ Next, build all available targets required for the `deb` package
 cmake --build . --target all
 ```
 
-Finally, execute the `cpack` command inside the template project build directory:
+Finally, execute the `cpack` command inside the project build directory:
 
 ```
 # inside the project build directory
@@ -441,7 +437,7 @@ In order to examine details of the `deb` package configuration visit the `cmake/
 
 ## Enabling the flatpak package generation support
 
-In order to enable the flatpak generation of the redistribution package on the template project configure it with enabled option `ENABLE_FLATPAK` (GNU/Linux and alike):
+In order to enable the flatpak generation of the redistribution package on the project configure it with enabled option `ENABLE_FLATPAK` (GNU/Linux and alike):
 
 ```
 # inside the project root directory 
@@ -461,7 +457,7 @@ cmake --build . --target flatpak
 
 In case of the success target build, there will be created the flatpak file under the root build directory named, for example, the `barch-encoder-0.9.0.flatpak`. In order to examine and/or change the flatpak generation target parameters visit the `cmake/template-project-flatpak-target.cmake` or `misc/flatpak.conf.json.in` files.
 
-Refer to the flatpak documentation on how to install and run applications distributed from a flatpaks files. For the current template project's defaults the install and run command may look like this:
+Refer to the flatpak documentation on how to install and run applications distributed from a flatpaks files. For the current project's defaults the install and run command may look like this:
 
 ```
 # to install (version may change)
@@ -474,7 +470,7 @@ flatpak run ua.org.kytok.template.barch-encoder
 
 ## Enabling the Docker container build and run
 
-To be able to build and run the Docker container with current template project' target binary file enable it's CMake target with setting the `ENABLE_DOCKER` variable into value `ON` by using the next command:
+To be able to build and run the Docker container with current project' target binary file enable it's CMake target with setting the `ENABLE_DOCKER` variable into value `ON` by using the next command:
 
 ```
 # inside the project root directory
