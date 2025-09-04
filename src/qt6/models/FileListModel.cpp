@@ -116,6 +116,7 @@ bool FileListModel::thread_perform(barchclib0::ILibPtr converter,
     }
   } else if (is_barch(model->filepath())) {
     model->current_operation(decoding.toUtf8().constData());
+    emit_row_data_update(idx);
     if (!thread_deal_barch(converter, model)) {
       LOGE("Failure while dealing with the Barch " << model->filepath());
       model->current_operation(error.toUtf8().constData());
