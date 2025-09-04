@@ -136,7 +136,11 @@ BMPImagePtr BMPReader::read_data(const fs::path& imagePath)
 
     buff.resize(width);
 
-    fdata.insert(fdata.end(), buff.begin(), buff.end());
+    if (infoHeader.biHeight > 0) {
+      fdata.insert(fdata.begin(), buff.begin(), buff.end());
+    } else {
+      fdata.insert(fdata.end(), buff.begin(), buff.end());
+    }
   }
 
   fimage.close();
