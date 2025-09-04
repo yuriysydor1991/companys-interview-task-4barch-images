@@ -37,8 +37,7 @@ int Qt6Initer::run(std::shared_ptr<app::ApplicationContext> actx)
   }
 
   QCoreApplication::setOrganizationName(
-      QString::fromStdString(project_decls::PROJECT_NAME + " " +
-                             project_decls::PROJECT_BUILD_VERSION));
+      QString::fromStdString(project_decls::PROJECT_NAME));
 
   QGuiApplication app(actx->argc, actx->argv);
   QQmlApplicationEngine engine;

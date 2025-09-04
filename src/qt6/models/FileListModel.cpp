@@ -54,7 +54,9 @@ QVariant FileListModel::data(const QModelIndex &index, int role) const
     return {};
   }
 
-  const ImageFileModelPtr image = imagesSet.at(index.row());
+  const auto &pair = imagesSet.at(index.row());
+
+  const ImageFileModelPtr image = pair.second;
 
   if (image == nullptr) {
     LOGE("Retrieved invalid object pointer");
@@ -89,8 +91,13 @@ QHash<int, QByteArray> FileListModel::roleNames() const
   return roles;
 }
 
+void FileListModel::emit_row_data_update(QModelIndex idx)
+{
+  emit dataChanged(idx, idx, {ImageOperationRole});
+}
+
 bool FileListModel::thread_perform(barchclib0::ILibPtr converter,
-                                   ImageFileModelPtr model)
+                                   ImageFileModelPtr model, QModelIndex idx)
 {
   static const QString encoding = QStringLiteral("Кодується");
   static const QString decoding = QStringLiteral("Розкодовується");
@@ -99,9 +106,11 @@ bool FileListModel::thread_perform(barchclib0::ILibPtr converter,
 
   if (is_bmp(model->filepath())) {
     model->current_operation(encoding.toUtf8().constData());
+    emit_row_data_update(idx);
     if (!thread_deal_bmp(converter, model)) {
       LOGE("Failure while dealing with the BMP " << model->filepath());
       model->current_operation(error.toUtf8().constData());
+      emit_row_data_update(idx);
       return false;
     }
   } else if (is_barch(model->filepath())) {
@@ -109,6 +118,7 @@ bool FileListModel::thread_perform(barchclib0::ILibPtr converter,
     if (!thread_deal_barch(converter, model)) {
       LOGE("Failure while dealing with the Barch " << model->filepath());
       model->current_operation(error.toUtf8().constData());
+      emit_row_data_update(idx);
       return false;
     }
   } else {
@@ -116,6 +126,7 @@ bool FileListModel::thread_perform(barchclib0::ILibPtr converter,
   }
 
   model->current_operation(done.toUtf8().constData());
+  emit_row_data_update(idx);
 
   return true;
 }
@@ -180,7 +191,14 @@ void FileListModel::convert_file(const int &gindex)
     return;
   }
 
-  auto imgptr = imagesSet.at(gindex);
+  auto &ipair = imagesSet.at(gindex);
+
+  if (!ipair.first->try_lock()) {
+    LOGE("Image already in processing");
+    return;
+  }
+
+  auto imgptr = ipair.second;
 
   assert(imgptr != nullptr);
 
@@ -198,18 +216,17 @@ void FileListModel::convert_file(const int &gindex)
   LOGD("Trying to create dealing thread");
 
   mthqueue.insert(
-      std::make_shared<std::thread>([this, converter, imgptr, idx]() {
-        if (!thread_perform(converter, imgptr)) {
+      std::make_shared<std::thread>([this, converter, ipair, idx]() {
+        if (!thread_perform(converter, ipair.second, idx)) {
           LOGE("Failure during task performing");
+          ipair.first->unlock();
           return;
         }
 
         LOGT("Performed successfully");
 
-        emit dataChanged(idx, idx, {ImageOperationRole});
+        ipair.first->unlock();
       }));
-
-  emit dataChanged(idx, idx, {ImageOperationRole});
 
   clean_threads();
 }
@@ -253,7 +270,7 @@ bool FileListModel::init(const std::filesystem::path &dpath)
     return false;
   }
 
-  if (fs::is_directory(dpath)) {
+  if (!fs::is_directory(dpath)) {
     LOGE("Path " << dpath << " is not a directory!");
     return false;
   }
@@ -279,7 +296,9 @@ bool FileListModel::init(const std::filesystem::path &dpath)
 
       LOGT("new image index: " << cimage->index());
 
-      imagesSet.emplace_back(cimage);
+      muteximagepair p(std::make_shared<std::mutex>(), ImageFileModelPtr(cimage));
+
+      imagesSet.emplace_back(p);
     }
   }
   catch (const std::exception &e) {

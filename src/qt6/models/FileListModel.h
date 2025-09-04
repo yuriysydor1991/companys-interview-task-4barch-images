@@ -28,8 +28,9 @@ class FileListModel : public QAbstractListModel
     ImageOperationRole = Qt::UserRole + 3,
   };
 
-  // using muteximagepair = std::pair<std::mutex, >
-  using ImageFileModelSet = std::vector<ImageFileModelPtr>;
+  using mutexptr = std::shared_ptr<std::mutex>;
+  using muteximagepair = std::pair<mutexptr, ImageFileModelPtr>;
+  using ImageFileModelSet = std::vector<muteximagepair>;
   using FileListModelPtr = std::shared_ptr<FileListModel>;
   using threadsQueue = std::set<std::shared_ptr<std::thread>>;
 
@@ -58,12 +59,13 @@ class FileListModel : public QAbstractListModel
   static bool is_barch(const std::filesystem::path &gpath);
   static bool is_image(const std::filesystem::path &gpath);
 
-  static bool thread_perform(barchclib0::ILibPtr converter,
-                             ImageFileModelPtr model);
-  static bool thread_deal_bmp(barchclib0::ILibPtr converter,
-                              ImageFileModelPtr model);
-  static bool thread_deal_barch(barchclib0::ILibPtr converter,
-                                ImageFileModelPtr model);
+  bool thread_perform(barchclib0::ILibPtr converter, ImageFileModelPtr model,
+                      QModelIndex idx);
+  bool thread_deal_bmp(barchclib0::ILibPtr converter, ImageFileModelPtr model);
+  bool thread_deal_barch(barchclib0::ILibPtr converter,
+                         ImageFileModelPtr model);
+
+  void emit_row_data_update(QModelIndex idx);
 
   void clean_threads();
 
