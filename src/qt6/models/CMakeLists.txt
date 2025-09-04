@@ -24,12 +24,12 @@ target_include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
   PUBLIC 
     ${CMAKE_SOURCE_DIR}/src/lib/facade/includes
-  PUBLIC Qt6::Core
+  PUBLIC Qt6::Core Qt6::Gui
 )
 
 target_link_libraries(
   TheBarchCoderQt6ModelsObj
-  Qt6::Core
+  Qt6::Core Qt6::Gui
 )
 
 target_link_libraries(

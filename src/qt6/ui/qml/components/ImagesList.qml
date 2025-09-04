@@ -51,7 +51,6 @@ Item {
       MouseArea {
         anchors.fill: parent
         onClicked: { 
-          console.log("Row clicked: " + path)
           listView.model.convert_file(index)
           listView.selectedIndex = index
         }
