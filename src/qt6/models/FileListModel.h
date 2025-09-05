@@ -2,7 +2,6 @@
 #define THE_BMP_2_BARCH_CODER_PROJECT_FILELISTMODEL_STRUCT_H
 
 #include <QAbstractListModel>
-#include <QStringList>
 #include <filesystem>
 #include <memory>
 #include <set>

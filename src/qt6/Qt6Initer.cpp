@@ -10,6 +10,7 @@
 #include "src/log/log.h"
 #include "src/qt6/QMLRes.h"
 #include "src/qt6/models/FileListModel.h"
+#include "src/qt6/models/ErrorSingleModel.h"
 
 namespace Qt6i
 {
@@ -18,6 +19,7 @@ int Qt6Initer::run(std::shared_ptr<app::ApplicationContext> actx)
 {
   using FileListModelPtr = models::FileListModelPtr;
   using FileListModel = models::FileListModel;
+  using ErrorSingleModel = models::ErrorSingleModel;
   using QMLRes = qmlpaths::QMLRes;
 
   assert(actx != nullptr);
@@ -28,6 +30,7 @@ int Qt6Initer::run(std::shared_ptr<app::ApplicationContext> actx)
   }
 
   FileListModelPtr imagesModel = FileListModel::create();
+  ErrorSingleModel& errorModel = ErrorSingleModel::instance();
 
   assert(imagesModel != nullptr);
 
@@ -46,6 +49,8 @@ int Qt6Initer::run(std::shared_ptr<app::ApplicationContext> actx)
 
   engine.rootContext()->setContextProperty("ImagesFilesListProvider",
                                            imagesModel.get());
+  engine.rootContext()->setContextProperty("ErrorProvider",
+                                           &errorModel);
 
   engine.load(QMLRes::get_url_main());
 

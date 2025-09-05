@@ -6,8 +6,17 @@
 #include <QStringList>
 #include <exception>
 #include <memory>
+#include <sstream>
 
 #include "src/log/log.h"
+#include "src/qt6/models/ErrorSingleModel.h"
+
+#define CUSTOM_UILOGE(msg) { \
+  LOGE(msg); \
+  std::stringstream oss; \
+  oss << msg ; \
+  ErrorSingleModel::instance().setError(QString::fromStdString(oss.str())); \
+}
 
 namespace Qt6i::models
 {
@@ -51,7 +60,7 @@ int FileListModel::rowCount(const QModelIndex &parent) const
 QVariant FileListModel::data(const QModelIndex &index, int role) const
 {
   if (!index.isValid() || index.row() < 0 || index.row() >= imagesSet.size()) {
-    LOGE("Invalid index provided: " << index.row());
+    CUSTOM_UILOGE("Invalid index provided: " << index.row());
     return {};
   }
 
@@ -60,7 +69,7 @@ QVariant FileListModel::data(const QModelIndex &index, int role) const
   const ImageFileModelPtr image = pair.second;
 
   if (image == nullptr) {
-    LOGE("Retrieved invalid object pointer");
+    CUSTOM_UILOGE("Retrieved invalid object pointer");
     return {};
   }
 
@@ -76,7 +85,7 @@ QVariant FileListModel::data(const QModelIndex &index, int role) const
     return QString::fromStdString(image->current_operation());
   }
 
-  LOGE("Unknown role provided: " << role);
+  CUSTOM_UILOGE("Unknown role provided: " << role);
 
   return {};
 }
@@ -109,7 +118,7 @@ bool FileListModel::thread_perform(barchclib0::ILibPtr converter,
     model->current_operation(encoding.toUtf8().constData());
     emit_row_data_update(idx);
     if (!thread_deal_bmp(converter, model)) {
-      LOGE("Failure while dealing with the BMP " << model->filepath());
+      CUSTOM_UILOGE("Failure while dealing with the BMP " << model->filepath());
       model->current_operation(error.toUtf8().constData());
       emit_row_data_update(idx);
       return false;
@@ -118,13 +127,13 @@ bool FileListModel::thread_perform(barchclib0::ILibPtr converter,
     model->current_operation(decoding.toUtf8().constData());
     emit_row_data_update(idx);
     if (!thread_deal_barch(converter, model)) {
-      LOGE("Failure while dealing with the Barch " << model->filepath());
+      CUSTOM_UILOGE("Failure while dealing with the Barch " << model->filepath());
       model->current_operation(error.toUtf8().constData());
       emit_row_data_update(idx);
       return false;
     }
   } else {
-    LOGE("Unknown file type" << model->filepath());
+    CUSTOM_UILOGE("Unknown file type" << model->filepath());
   }
 
   model->current_operation(done.toUtf8().constData());
@@ -139,7 +148,7 @@ bool FileListModel::thread_deal_bmp(barchclib0::ILibPtr converter,
   auto img = converter->read(model->filepath());
 
   if (img == nullptr) {
-    LOGE("Fail while reading the image");
+    CUSTOM_UILOGE("Fail while reading the image");
     return false;
   }
 
@@ -147,7 +156,7 @@ bool FileListModel::thread_deal_bmp(barchclib0::ILibPtr converter,
   auto barch = converter->bmp_to_barch(img);
 
   if (barch == nullptr) {
-    LOGE("Failure during the barch conversion");
+    CUSTOM_UILOGE("Failure during the barch conversion");
     return false;
   }
 
@@ -157,7 +166,7 @@ bool FileListModel::thread_deal_bmp(barchclib0::ILibPtr converter,
   barch->filepath(nfilepath);
 
   if (!converter->write(barch)) {
-    LOGE("Failure during barch save");
+    CUSTOM_UILOGE("Failure during barch save");
     return false;
   }
 
@@ -170,14 +179,14 @@ bool FileListModel::thread_deal_barch(barchclib0::ILibPtr converter,
   auto img = converter->read(model->filepath());
 
   if (img == nullptr) {
-    LOGE("Fail while reading the image");
+    CUSTOM_UILOGE("Fail while reading the image");
     return false;
   }
 
   auto bmp = converter->barch_to_bmp(img);
 
   if (bmp == nullptr) {
-    LOGE("Fail to unpack the barch: " << model->filepath());
+    CUSTOM_UILOGE("Fail to unpack the barch: " << model->filepath());
     return false;
   }
 
@@ -190,7 +199,7 @@ bool FileListModel::thread_deal_barch(barchclib0::ILibPtr converter,
       (model->filepath().filename().string() + "unpacked.bmp");
 
   if (!qimg.save(QString::fromStdString(newIPath.string()))) {
-    LOGE("Fail to save image to " << newIPath);
+    CUSTOM_UILOGE("Fail to save image to " << newIPath);
     return false;
   }
 
@@ -200,14 +209,14 @@ bool FileListModel::thread_deal_barch(barchclib0::ILibPtr converter,
 void FileListModel::convert_file(const int &gindex)
 {
   if (gindex < 0 || gindex > imagesSet.size()) {
-    LOGE("Invalid index provided");
+    CUSTOM_UILOGE("Invalid index provided");
     return;
   }
 
   auto &ipair = imagesSet.at(gindex);
 
   if (!ipair.first->try_lock()) {
-    LOGE("Image already in processing");
+    CUSTOM_UILOGE("Image already in processing");
     return;
   }
 
@@ -220,7 +229,7 @@ void FileListModel::convert_file(const int &gindex)
   assert(converter != nullptr);
 
   if (converter == nullptr) {
-    LOGE("Fail to create converter instance");
+    CUSTOM_UILOGE("Fail to create converter instance");
     return;
   }
 
@@ -231,7 +240,7 @@ void FileListModel::convert_file(const int &gindex)
   mthqueue.insert(
       std::make_shared<std::thread>([this, converter, ipair, idx]() {
         if (!thread_perform(converter, ipair.second, idx)) {
-          LOGE("Failure during task performing");
+          CUSTOM_UILOGE("Failure during task performing");
           ipair.first->unlock();
           return;
         }
@@ -279,12 +288,12 @@ bool FileListModel::init(const std::filesystem::path &dpath)
   namespace fs = std::filesystem;
 
   if (dpath.empty()) {
-    LOGE("Empty path provided");
+    CUSTOM_UILOGE("Empty path provided");
     return false;
   }
 
   if (!fs::is_directory(dpath)) {
-    LOGE("Path " << dpath << " is not a directory!");
+    CUSTOM_UILOGE("Path " << dpath << " is not a directory!");
     return false;
   }
 
@@ -316,7 +325,7 @@ bool FileListModel::init(const std::filesystem::path &dpath)
     }
   }
   catch (const std::exception &e) {
-    LOGE("Error during fs traverse: " << e.what());
+    CUSTOM_UILOGE("Error during fs traverse: " << e.what());
     return 1;
   }
 

@@ -3,5 +3,6 @@
     <file>ui/qml/main.qml</file>
     <file>ui/resources/images/kytok.org.ua-logo.png</file>
     <file>ui/qml/components/ImagesList.qml</file>
+    <file>ui/qml/components/ErrorDialog.qml</file>
   </qresource>
 </RCC>

@@ -14,6 +14,7 @@ qt_add_library(
   MANUAL_FINALIZATION
   FileListModel.cpp
   ImageFileModel.cpp
+  ErrorSingleModel.cpp
 )
 
 target_include_directories(
