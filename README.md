@@ -39,6 +39,24 @@ In order for quick release build commands examine the [src/scripts/build-release
 src/scripts/build-release.sh
 ```
 
+# Application launch
+
+In order to launch the application after it's successful build with a directory cmd param name run:
+
+```
+# in project root directory
+
+./build/src/barch-coder -cwd /path/to/the/bmp/images/dir
+```
+
+or
+
+```
+# in project root directory
+
+./build/src/barch-coder -d /path/to/the/bmp/images/dir
+```
+
 # Requirements
 
 
