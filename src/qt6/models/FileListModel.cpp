@@ -235,6 +235,8 @@ void FileListModel::convert_file(const int &gindex)
     return;
   }
 
+  LOGI("trying to process " << imgptr->filepath());
+
   QModelIndex idx = index(imgptr->index());
 
   LOGD("Trying to create dealing thread");
@@ -247,7 +249,7 @@ void FileListModel::convert_file(const int &gindex)
           return;
         }
 
-        LOGT("Performed successfully");
+        LOGI("successful process of " << ipair.second->filepath());
 
         ipair.first->unlock();
       }));

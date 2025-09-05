@@ -13,12 +13,12 @@ QString ErrorSingleModel::getError()
   QString cp;
 
   {
-    LOGI("Locking error");
+    LOGT("Locking error");
     std::lock_guard<std::mutex> lk{emutex};
 
     cp = lastError;
   }
-  LOGI("Unlocking error");
+  LOGT("Unlocking error");
 
   return cp;
 }
@@ -26,12 +26,12 @@ QString ErrorSingleModel::getError()
 void ErrorSingleModel::setError(const QString& msg)
 {
   {
-    LOGI("Locking set error");
+    LOGT("Locking set error");
     std::lock_guard<std::mutex> lk{emutex};
 
     lastError = msg;
   }
-  LOGI("Unlocking set error");
+  LOGT("Unlocking set error");
 
   emitError();
 }
