@@ -56,7 +56,11 @@ bool Application::check_and_change_cwd(std::shared_ptr<ApplicationContext> ctx)
     std::filesystem::current_path(ctx->startdir);
   }
   catch (const std::filesystem::filesystem_error& e) {
-    LOGE("Error: " << e.what());
+    std::string ed = "Can not set cwd to " + ctx->startdir + " because: ";
+    ed += e.what();
+    ctx->push_error(ed);
+    LOGE(ed);
+
     return false;
   }
 

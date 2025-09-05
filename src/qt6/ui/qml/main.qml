@@ -4,6 +4,8 @@ import QtQuick.Controls 2.12
 import "./components"
 
 ApplicationWindow {
+  id: mainWindow
+  
   visible: true
   
   property var errorModel: ErrorProvider
@@ -16,19 +18,27 @@ ApplicationWindow {
 
   ImagesList {}
   
-  ErrorDialog {
-    id: errorDialog
+  Loader {
+    id: errorDialogLoader
+    source: "qrc:/ui/qml/components/ErrorDialog.qml"
+    active: !get_e_empty()
     
-    anchors.centerIn: parent
+    onLoaded: update_error()
   }
   
-  onErrMsgChanged: {
-    if (typeof errMsg === 'undefined' || errMsg.length == 0) {
+  onErrMsgChanged: update_error()
+  
+  function update_error() {
+    if (get_e_empty() || !errorDialogLoader.item) {
       return
     }
     
-    errorDialog.text = errMsg
-    errorDialog.open()
+    errorDialogLoader.item.text = errMsg
+    errorDialogLoader.item.open()
+  }
+  
+  function get_e_empty() {
+    return typeof errMsg === 'undefined' || errMsg.length == 0;
   }
 }
 

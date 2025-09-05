@@ -9,8 +9,8 @@
 #include "src/app/IApplication.h"
 #include "src/log/log.h"
 #include "src/qt6/QMLRes.h"
-#include "src/qt6/models/FileListModel.h"
 #include "src/qt6/models/ErrorSingleModel.h"
+#include "src/qt6/models/FileListModel.h"
 
 namespace Qt6i
 {
@@ -39,6 +39,10 @@ int Qt6Initer::run(std::shared_ptr<app::ApplicationContext> actx)
     return app::IApplication::INVALID;
   }
 
+  if (!actx->errors.empty()) {
+    errorModel.setError(QString::fromStdString(actx->errors.back()));
+  }
+
   QCoreApplication::setOrganizationName(
       QString::fromStdString(project_decls::PROJECT_NAME));
 
@@ -49,8 +53,7 @@ int Qt6Initer::run(std::shared_ptr<app::ApplicationContext> actx)
 
   engine.rootContext()->setContextProperty("ImagesFilesListProvider",
                                            imagesModel.get());
-  engine.rootContext()->setContextProperty("ErrorProvider",
-                                           &errorModel);
+  engine.rootContext()->setContextProperty("ErrorProvider", &errorModel);
 
   engine.load(QMLRes::get_url_main());
 

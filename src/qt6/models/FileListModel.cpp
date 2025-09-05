@@ -11,12 +11,13 @@
 #include "src/log/log.h"
 #include "src/qt6/models/ErrorSingleModel.h"
 
-#define CUSTOM_UILOGE(msg) { \
-  LOGE(msg); \
-  std::stringstream oss; \
-  oss << msg ; \
-  ErrorSingleModel::instance().setError(QString::fromStdString(oss.str())); \
-}
+#define CUSTOM_UILOGE(msg)                                                    \
+  {                                                                           \
+    LOGE(msg);                                                                \
+    std::stringstream oss;                                                    \
+    oss << msg;                                                               \
+    ErrorSingleModel::instance().setError(QString::fromStdString(oss.str())); \
+  }
 
 namespace Qt6i::models
 {
@@ -127,7 +128,8 @@ bool FileListModel::thread_perform(barchclib0::ILibPtr converter,
     model->current_operation(decoding.toUtf8().constData());
     emit_row_data_update(idx);
     if (!thread_deal_barch(converter, model)) {
-      CUSTOM_UILOGE("Failure while dealing with the Barch " << model->filepath());
+      CUSTOM_UILOGE("Failure while dealing with the Barch "
+                    << model->filepath());
       model->current_operation(error.toUtf8().constData());
       emit_row_data_update(idx);
       return false;

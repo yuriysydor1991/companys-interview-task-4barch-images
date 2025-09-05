@@ -3,8 +3,8 @@
 
 #include <QObject>
 #include <memory>
-#include <thread>
 #include <mutex>
+#include <thread>
 
 namespace Qt6i::models
 {
@@ -15,16 +15,16 @@ namespace Qt6i::models
 class ErrorSingleModel : public QObject
 {
   Q_OBJECT
-  
+
   Q_PROPERTY(QString error_description READ getError NOTIFY errorChanged)
- public:  
+ public:
   QString getError();
   void setError(const QString& msg);
-  
+
   static ErrorSingleModel& instance();
-  
-signals:
-    void errorChanged(const QString& e);
+
+ signals:
+  void errorChanged(const QString& e);
 
  private:
   virtual ~ErrorSingleModel() = default;
@@ -33,9 +33,9 @@ signals:
   ErrorSingleModel(ErrorSingleModel&&) = delete;
   ErrorSingleModel& operator=(const ErrorSingleModel&) = delete;
   ErrorSingleModel& operator=(const ErrorSingleModel&&) = delete;
- 
+
   void emitError();
-  
+
   QString lastError;
   std::mutex emutex;
 };
