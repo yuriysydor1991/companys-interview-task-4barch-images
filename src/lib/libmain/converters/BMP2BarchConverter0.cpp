@@ -249,7 +249,8 @@ barchdata BMP2BarchConverter0::get_encoded_as_is(
 {
   LOGT("Coding as is");
 
-  static const unsigned char bitsRequired = get_batch_pixels_compress() * 8U;
+  static const unsigned char bitsRequired =
+      get_batch_pixels_compress() * ucharbits;
 
   barchdata rt;
 
@@ -274,10 +275,13 @@ barchdata BMP2BarchConverter0::get_encoded_as_is(
     pack_left_bits(dst, dst_left, data, data_left);
 
     if (data_left == zero) {
-      data_left = ucharbits;
-      begin++;
-      data = *begin;
       bitspacked += ucharbits;
+      begin++;
+      if (begin < end) {
+        LOGT("No data left");
+        data_left = ucharbits;
+        data = *begin;
+      }
     }
 
     if (dst_left == zero) {
@@ -290,6 +294,7 @@ barchdata BMP2BarchConverter0::get_encoded_as_is(
   }
 
   if (dst_left > zero && dst_left < ucharbits && bitspacked < bitsRequired) {
+    bitspacked += dst_left;
     dst <<= dst_left;
     LOGT("Packing last byte " << std::bitset<ucharbits>(dst) << " with "
                               << static_cast<unsigned int>(dst_left)
@@ -305,7 +310,11 @@ barchdata BMP2BarchConverter0::get_encoded_as_is(
     bitspacked += ucharbits;
     dst = zero;
     dst_left = ucharbits;
+    LOGT("already packed bits: " << static_cast<unsigned>(bitspacked));
   }
+
+  LOGT("total packed bits: " << static_cast<unsigned>(bitspacked) << "/"
+                             << static_cast<unsigned>(bitsRequired));
 
   return rt;
 }

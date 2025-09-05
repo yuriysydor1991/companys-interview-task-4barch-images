@@ -4,6 +4,8 @@ if(NOT ENABLE_UNIT_TESTS)
   return()
 endif()
 
+add_compile_options(-DNDEBUG=1)
+
 set(LIBMAIN_MOCK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/mocks)
 
 add_subdirectory(unit)
