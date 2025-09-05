@@ -2,6 +2,8 @@
 
 Project implemented due to company's interview test task execution.
 
+Translation of the current document for Ukrainian located under the `doc` directory or under the address [doc/README.uk_UA.md](doc/README.uk_UA.md)
+
 **Best runs on the Linux Mint (Ubuntu-derived)** Other systems may require packages names investigation and change.
 
 # Cloning the barch-encoder project
