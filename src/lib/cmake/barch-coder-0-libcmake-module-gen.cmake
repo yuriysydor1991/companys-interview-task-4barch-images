@@ -26,7 +26,7 @@ write_basic_package_version_file(
 
 # Generate a Config.cmake
 configure_package_config_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/barch-coder0Config.cmake.in"
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_LIBRARY_NAME}Config.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_LIBRARY_NAME}Config.cmake"
   INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_LIBRARY_NAME}
 )
